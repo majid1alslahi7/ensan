@@ -3,7 +3,7 @@ import {
   FaVideo, FaChartBar, FaBriefcase, FaPhone, 
   FaBook, FaShield, FaComment, 
   FaHandHoldingHeart, FaEnvelope, FaHouse, FaCircleInfo, 
-  FaDiagramProject, FaBullhorn, FaChartPie, FaHandsHelping,
+  FaDiagramProject, FaBullhorn, FaChartPie,
   FaWheatAwn, FaHouseChimney, FaHeartPulse, FaDroplet, FaShieldHalved,
   FaEye, FaBullseye, FaHeart, FaLocationDot
 } from 'react-icons/fa6';
@@ -16,18 +16,6 @@ export const siteData = {
     vision: 'بناء وتكريم الأفراد والمجتمعات إنسانياً وتمكينهم تنموياً',
     mission: 'نبادر لتمكين المجتمع والعائلات والأفراد من خلال برامج الاستجابة الإنسانية والتنمية المستدامة باحترافية وشراكات فاعلة.',
     values: ['التعلم', 'الإحترافية', 'المبادرة', 'المساءلة', 'الحيادية', 'الاستدامة', 'الاستقلالية', 'المرونة'],
-    goals: [
-      'توفير المساعدات الإنسانية الطارئة للمحتاجين',
-      'تعزيز الأمن الغذائي',
-      'توفير الرعاية الصحية',
-      'تمويل ودعم المشاريع الصغيرة',
-      'تحسين جودة التعليم',
-      'تمكين المرأة',
-      'تعزيز حقوق الإنسان',
-      'تحسين البنية التحتية',
-      'رفع مستوى الوعي البيئي',
-      'تقديم الدعم النفسي والاجتماعي'
-    ],
     structure: 'الهيكل التنظيمي للمؤسسة يتكون من مجلس الإدارة، الإدارة التنفيذية، والقطاعات البرامجية والدعم.',
     locations: [
       { city: 'الضالع', type: 'المكتب الرئيسي', address: 'الضالع - اليمن' },
