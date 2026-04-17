@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { FaDownload, FaTimes, FaMobileScreen } from 'react-icons/fa6';
+import { FaDownload, FaXmark, FaMobileScreen } from 'react-icons/fa6';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -100,7 +100,7 @@ export default function PWAInstaller() {
                 onClick={handleDismiss}
                 className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
               >
-                <FaTimes className="text-sm" />
+                <FaXmark className="text-sm" />
               </button>
             </div>
           </div>
