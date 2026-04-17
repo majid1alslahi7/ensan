@@ -7,7 +7,6 @@ import { tokens } from '@/lib/tokens';
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-secondary-700">
-      {/* Animated Background */}
       <div className="absolute inset-0">
         <motion.div 
           animate={{ scale: [1, 1.2, 1], rotate: [0, 45, 0] }}
@@ -26,7 +25,6 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 text-center text-white px-4 max-w-6xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }} 
@@ -54,7 +52,7 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className="text-xl md:text-3xl mb-10 opacity-95"
         >
-          {tokens.brand.sloganAr}
+          {tokens.brand.slogan}
         </motion.p>
         
         <motion.div 
@@ -85,7 +83,6 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Scroll Indicator */}
       <motion.div 
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
