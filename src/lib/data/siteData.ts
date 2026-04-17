@@ -1,11 +1,11 @@
 import { 
   FaUsers, FaSitemap, FaMapPin, FaNewspaper, FaStar, FaImages, 
-  FaVideo, FaChartBar, FaBriefcase, FaFileContract, FaPhone, 
-  FaUserClock, FaFileAlt, FaBook, FaShield, FaComment, 
+  FaVideo, FaChartBar, FaBriefcase, FaPhone, 
+  FaBook, FaShield, FaComment, 
   FaHandHoldingHeart, FaEnvelope, FaHouse, FaCircleInfo, 
   FaDiagramProject, FaBullhorn, FaChartPie, FaHandsHelping,
   FaWheatAwn, FaHouseChimney, FaHeartPulse, FaDroplet, FaShieldHalved,
-  FaEye, FaBullseye, FaHeart
+  FaEye, FaBullseye, FaHeart, FaLocationDot
 } from 'react-icons/fa6';
 
 export const siteData = {
@@ -17,36 +17,16 @@ export const siteData = {
     mission: 'نبادر لتمكين المجتمع والعائلات والأفراد من خلال برامج الاستجابة الإنسانية والتنمية المستدامة باحترافية وشراكات فاعلة.',
     values: ['التعلم', 'الإحترافية', 'المبادرة', 'المساءلة', 'الحيادية', 'الاستدامة', 'الاستقلالية', 'المرونة'],
     goals: [
-      'توفير المساعدات الإنسانية الطارئة للمحتاجين في المناطق المتضررة',
-      'تعزيز الأمن الغذائي عبر توزيع المواد الغذائية الأساسية',
-      'توفير الرعاية الصحية والعلاج الطبي للنازحين والفقراء',
-      'تمويل ودعم المشاريع الصغيرة والمتوسطة لتعزيز النمو الاقتصادي',
-      'تحسين جودة التعليم ودعم المدارس والطلاب في المناطق النائية',
-      'تمكين المرأة من خلال برامج تدريبية وتطوير المهارات',
-      'تعزيز حقوق الإنسان وحماية الفئات الضعيفة',
-      'تحسين البنية التحتية في المناطق المحرومة',
-      'رفع مستوى الوعي البيئي من خلال حملات توعوية',
-      'تقديم الدعم النفسي والاجتماعي للمجتمعات المتضررة',
-      'توفير برامج تأهيل مهني وتمكين اقتصادي للشباب',
-      'تقديم مساعدات مالية للمتضررين من الأزمات والكوارث',
-      'دعم قطاع الزراعة عبر توفير الدعم الفني والمالي',
-      'تعزيز قيم السلام والمصالحة في المجتمعات',
-      'تطوير البرامج الصحية الوقائية',
-      'تشجيع الابتكار واستخدام التكنولوجيا في الحلول الإنسانية',
-      'تحسين نوعية الحياة في المخيمات',
-      'إنشاء مراكز تدريب لتطوير المهارات',
-      'تعزيز الشراكات مع المنظمات الدولية والمحلية',
-      'توفير الدعم للأنشطة الثقافية والتراثية',
-      'تعزيز خدمات المياه والإصحاح البيئي',
-      'تنفيذ خدمات الحماية المتكاملة',
-      'تنفيذ برامج التضامن الاجتماعي (كفالة الأيتام، رعاية الأرامل)',
-      'تدريب وتأهيل الشباب والفتيات وتمكينهم اقتصادياً',
-      'تشجيع الأعمال الخيرية والتعاونية والطوعية',
-      'تعزيز القيم الإسلامية والمجتمعية',
-      'رعاية الأطفال وتوفير حماية متكاملة لهم',
-      'المساهمة في المشاريع التنموية وبناء الأصول المجتمعية',
-      'الاستجابة الطارئة للمتضررين من الأزمات والكوارث',
-      'تنفيذ برامج وأنشطة في مختلف القطاعات والمجالات'
+      'توفير المساعدات الإنسانية الطارئة للمحتاجين',
+      'تعزيز الأمن الغذائي',
+      'توفير الرعاية الصحية',
+      'تمويل ودعم المشاريع الصغيرة',
+      'تحسين جودة التعليم',
+      'تمكين المرأة',
+      'تعزيز حقوق الإنسان',
+      'تحسين البنية التحتية',
+      'رفع مستوى الوعي البيئي',
+      'تقديم الدعم النفسي والاجتماعي'
     ],
     structure: 'الهيكل التنظيمي للمؤسسة يتكون من مجلس الإدارة، الإدارة التنفيذية، والقطاعات البرامجية والدعم.',
     locations: [
@@ -57,48 +37,13 @@ export const siteData = {
     ]
   },
   programs: [
-    { 
-      id: 'food-security', name: 'الأمن الغذائي', icon: 'FaWheatAwn', 
-      description: 'تعزيز الأمن الغذائي وتحسين سبل العيش المستدام من خلال تدخلات إنسانية.', 
-      projects: 24, families: 41612, individuals: 254048, 
-      locations: ['الضالع', 'مأرب', 'صنعاء', 'تعز'], color: '#2563eb' 
-    },
-    { 
-      id: 'shelter', name: 'المأوى والمواد غير الغذائية', icon: 'FaHouseChimney', 
-      description: 'الاستجابة بكفاءة لاحتياجات النازحين واللاجئين والعائدين.', 
-      projects: 3, families: 800, individuals: 5600, 
-      locations: ['الضالع'], color: '#22c55e' 
-    },
-    { 
-      id: 'education', name: 'التعليم', icon: 'FaBook', 
-      description: 'المساهمة في خفض معدلات الأمية والانقطاع من التعليم.', 
-      projects: 11, families: 0, individuals: 10640, 
-      locations: ['الضالع'], color: '#f97316' 
-    },
-    { 
-      id: 'health', name: 'الصحة', icon: 'FaHeartPulse', 
-      description: 'رفع مستوى الخدمات الصحية وتحسين معيشة السكان المتضررين.', 
-      projects: 0, families: 0, individuals: 0, 
-      locations: [], color: '#ef4444' 
-    },
-    { 
-      id: 'water', name: 'المياه والإصحاح البيئي', icon: 'FaDroplet', 
-      description: 'تحسين مستوى الوصول إلى المياه الآمنة والصرف الصحي المناسب.', 
-      projects: 11, families: 3915, individuals: 21161, 
-      locations: ['الضالع'], color: '#06b6d4' 
-    },
-    { 
-      id: 'protection', name: 'الحماية', icon: 'FaShieldHalved', 
-      description: 'الحفاظ على كرامة الإنسان وصون حقوقه الأساسية.', 
-      projects: 8, families: 500, individuals: 2352, 
-      locations: ['الضالع', 'صنعاء'], color: '#8b5cf6' 
-    },
-    { 
-      id: 'livelihood', name: 'التمكين وسبل العيش', icon: 'FaBriefcase', 
-      description: 'تنفيذ برامج تمكين وتدريب وتأهيل لتحقيق الاعتماد على الذات.', 
-      projects: 0, families: 0, individuals: 0, 
-      locations: [], color: '#eab308' 
-    }
+    { id: 'food-security', name: 'الأمن الغذائي', icon: 'FaWheatAwn', description: 'تعزيز الأمن الغذائي وتحسين سبل العيش المستدام.', projects: 24, families: 41612, individuals: 254048, locations: ['الضالع', 'مأرب', 'صنعاء', 'تعز'], color: '#1A5F7A' },
+    { id: 'shelter', name: 'المأوى والمواد غير الغذائية', icon: 'FaHouseChimney', description: 'الاستجابة بكفاءة لاحتياجات النازحين واللاجئين والعائدين.', projects: 3, families: 800, individuals: 5600, locations: ['الضالع'], color: '#159C4B' },
+    { id: 'education', name: 'التعليم', icon: 'FaBook', description: 'المساهمة في خفض معدلات الأمية والانقطاع من التعليم.', projects: 11, families: 0, individuals: 10640, locations: ['الضالع'], color: '#D4621A' },
+    { id: 'health', name: 'الصحة', icon: 'FaHeartPulse', description: 'رفع مستوى الخدمات الصحية وتحسين معيشة السكان.', projects: 0, families: 0, individuals: 0, locations: [], color: '#EF4444' },
+    { id: 'water', name: 'المياه والإصحاح البيئي', icon: 'FaDroplet', description: 'تحسين مستوى الوصول إلى المياه الآمنة والصرف الصحي.', projects: 11, families: 3915, individuals: 21161, locations: ['الضالع'], color: '#3B82F6' },
+    { id: 'protection', name: 'الحماية', icon: 'FaShieldHalved', description: 'الحفاظ على كرامة الإنسان وصون حقوقه الأساسية.', projects: 8, families: 500, individuals: 2352, locations: ['الضالع', 'صنعاء'], color: '#8B5CF6' },
+    { id: 'livelihood', name: 'التمكين وسبل العيش', icon: 'FaBriefcase', description: 'تنفيذ برامج تمكين وتدريب وتأهيل.', projects: 0, families: 0, individuals: 0, locations: [], color: '#F59E0B' }
   ],
   stats: { projects: 57, families: 46827, individuals: 293801, volunteers: 500, locations: 5 },
   navigation: {
