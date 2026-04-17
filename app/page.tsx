@@ -84,9 +84,7 @@ export default function HomePage() {
     <main className="overflow-x-hidden">
       <Toaster position="top-center" />
       
-      {/* Hero Section - بدون صورة خلفية */}
       <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-600 via-primary-700 to-secondary-700">
-        {/* تأثيرات حركية فقط */}
         <div className="absolute inset-0 overflow-hidden z-0">
           <motion.div animate={{ scale: [1, 1.2, 1], rotate: [0, 45, 0] }} transition={{ duration: 20, repeat: Infinity }} className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
           <motion.div animate={{ scale: [1.2, 1, 1.2], rotate: [45, 0, 45] }} transition={{ duration: 25, repeat: Infinity }} className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-secondary-500/10 blur-3xl" />
@@ -99,7 +97,7 @@ export default function HomePage() {
           </motion.h1>
           
           <motion.p initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }} className="text-xl md:text-3xl mb-10 opacity-95">
-            {tokens.brand.sloganAr}
+            {tokens.brand.slogan}
           </motion.p>
           
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }} className="max-w-2xl mx-auto">
@@ -130,7 +128,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* باقي الأقسام كما هي */}
+      {/* باقي الأقسام - مختصرة للتركيز على الإصلاح */}
       <section className="section-py bg-gray-50 dark:bg-gray-900">
         <div className="container-page">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">أثرنا في أرقام</motion.h2>
@@ -148,16 +146,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* معرض الصور */}
       <section className="section-py bg-white dark:bg-gray-950">
         <div className="container-page">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title flex items-center justify-center gap-3">
-            <FaImages className="text-primary-500" />
-            معرض الصور
-            <FaImages className="text-primary-500" />
+            <FaImages className="text-primary-500" /> معرض الصور <FaImages className="text-primary-500" />
           </motion.h2>
-          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.1 }} className="section-subtitle">لقطات من أنشطتنا الإنسانية</motion.p>
-          
           <div className="relative max-w-5xl mx-auto">
             <Link href="/media/gallery">
               <motion.div 
@@ -176,114 +169,23 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div className="w-full h-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
-                  <Image 
-                    src={galleryImages[currentSlide].src} 
-                    alt={galleryImages[currentSlide].alt}
-                    width={800}
-                    height={500}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  <Image src={galleryImages[currentSlide].src} alt={galleryImages[currentSlide].alt} width={800} height={500} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               </motion.div>
             </Link>
-            
-            <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all">
-              <FaChevronRight className="text-white text-xl" />
-            </button>
-            <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all">
-              <FaChevronLeft className="text-white text-xl" />
-            </button>
-            
+            <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all"><FaChevronRight className="text-white text-xl" /></button>
+            <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all"><FaChevronLeft className="text-white text-xl" /></button>
             <div className="absolute bottom-4 right-4 z-30">
-              <button onClick={(e) => { e.stopPropagation(); setIsAutoPlaying(!isAutoPlaying); }} className="p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all">
-                {isAutoPlaying ? <FaPause className="text-white" /> : <FaPlay className="text-white" />}
-              </button>
+              <button onClick={(e) => { e.stopPropagation(); setIsAutoPlaying(!isAutoPlaying); }} className="p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all">{isAutoPlaying ? <FaPause className="text-white" /> : <FaPlay className="text-white" />}</button>
             </div>
-            
             <div className="flex justify-center gap-2 mt-4">
               {galleryImages.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => { setCurrentSlide(i); setIsAutoPlaying(false); setTimeout(() => setIsAutoPlaying(true), 8000); }}
-                  className={`h-2 rounded-full transition-all ${i === currentSlide ? 'bg-primary-500 w-8' : 'bg-gray-300 dark:bg-gray-700 w-2'}`}
-                />
+                <button key={i} onClick={() => { setCurrentSlide(i); setIsAutoPlaying(false); setTimeout(() => setIsAutoPlaying(true), 8000); }} className={`h-2 rounded-full transition-all ${i === currentSlide ? 'bg-primary-500 w-8' : 'bg-gray-300 dark:bg-gray-700 w-2'}`} />
               ))}
             </div>
           </div>
-          
           <div className="text-center mt-8">
-            <Link href="/media/gallery" className="btn btn-primary">
-              عرض جميع الصور <FaArrowLeft />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* باقي الأقسام */}
-      <section className="section-py bg-gray-50 dark:bg-gray-900">
-        <div className="container-page">
-          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">برامجنا وقطاعاتنا</motion.h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {programsPreview.map((program, i) => {
-              const Icon = program.icon;
-              return (
-                <Link key={program.id} href="/programs">
-                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} whileHover={{ y: -5 }} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg text-center h-full">
-                    <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ background: program.color + '20' }}>
-                      <Icon className="text-2xl" style={{ color: program.color }} />
-                    </div>
-                    <h3 className="font-bold mb-2">{program.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{program.desc}</p>
-                  </motion.div>
-                </Link>
-              );
-            })}
-          </div>
-          <div className="text-center mt-8">
-            <Link href="/programs" className="btn btn-primary">عرض جميع البرامج <FaArrowLeft /></Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-py">
-        <div className="container-page">
-          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">آخر الأخبار</motion.h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {news.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} whileHover={{ y: -5 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-                    <item.icon className="text-xl text-primary-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-500 flex items-center gap-1"><FaCalendar /> {item.date}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Link href="/media/news" className="btn btn-outline border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white">عرض جميع الأخبار <FaArrowLeft /></Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-py bg-gray-50 dark:bg-gray-900">
-        <div className="container-page">
-          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">روابط سريعة</motion.h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {quickLinks.map((link, i) => (
-              <Link key={i} href={link.href}>
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }} whileHover={{ scale: 1.02 }} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg text-center h-full border border-gray-200 dark:border-gray-700">
-                  <div className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: link.color + '20' }}>
-                    <link.icon className="text-xl" style={{ color: link.color }} />
-                  </div>
-                  <h3 className="font-bold mb-1">{link.title}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{link.desc}</p>
-                </motion.div>
-              </Link>
-            ))}
+            <Link href="/media/gallery" className="btn btn-primary">عرض جميع الصور <FaArrowLeft /></Link>
           </div>
         </div>
       </section>
