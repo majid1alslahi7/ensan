@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eusran-v1';
+const CACHE_NAME = 'eusran-v2';
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -40,24 +40,12 @@ self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
-        .catch(() => {
-          return caches.match('/');
-        })
+        .catch(() => caches.match('/'))
     );
   } else {
     event.respondWith(
       caches.match(event.request)
-        .then((response) => {
-          return response || fetch(event.request)
-            .then((fetchResponse) => {
-              if (fetchResponse && fetchResponse.status === 200) {
-                const responseToCache = fetchResponse.clone();
-                caches.open(CACHE_NAME)
-                  .then((cache) => cache.put(event.request, responseToCache));
-              }
-              return fetchResponse;
-            });
-        })
+        .then((response) => response || fetch(event.request))
         .catch(() => {
           if (event.request.destination === 'image') {
             return caches.match('/icon-192.png');

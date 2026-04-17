@@ -21,13 +21,23 @@ export default function Footer() {
     { icon: FaTelegram, href: '#', color: '#26A5E4' },
   ];
 
+  // روابط سريعة محدثة
+  const quickLinks = [
+    { name: 'الرئيسية', href: '/' },
+    { name: 'من نحن', href: '/about' },
+    { name: 'البرامج', href: '/programs' },
+    { name: 'المشاريع', href: '/projects' },
+    { name: 'الأخبار', href: '/media/news' },
+    { name: 'التقارير', href: '/reports' },
+    { name: 'تواصل معنا', href: '/contact' },
+  ];
+
   return (
     <footer className="relative bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 mt-auto border-t border-gray-200 dark:border-gray-800">
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500" />
       
       <div className="container-page py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Logo & About */}
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <div className="flex items-center gap-2 mb-3">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 p-0.5">
@@ -47,13 +57,12 @@ export default function Footer() {
             </div>
           </motion.div>
 
-          {/* Quick Links */}
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
             <h4 className="text-gray-900 dark:text-white text-base font-bold mb-3 flex items-center gap-1.5">
               <FaCode className="text-primary-500 text-xs" /> روابط سريعة
             </h4>
             <ul className="space-y-1.5">
-              {siteData.navigation.main.slice(0, 6).map((item: any) => (
+              {quickLinks.map((item) => (
                 <li key={item.name}>
                   <Link href={item.href} className="text-gray-600 dark:text-gray-400 hover:text-primary-500 text-xs flex items-center gap-1.5">
                     <span className="w-1 h-1 bg-primary-500 rounded-full" />
@@ -64,7 +73,6 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Contact */}
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
             <h4 className="text-gray-900 dark:text-white text-base font-bold mb-3 flex items-center gap-1.5">
               <FaPhone className="text-primary-500 text-xs" /> تواصل معنا
@@ -82,7 +90,6 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Developer - مصغر */}
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
             <h4 className="text-gray-900 dark:text-white text-base font-bold mb-3 flex items-center gap-1.5">
               <FaCode className="text-primary-500 text-xs" /> تم التطوير بواسطة
@@ -108,7 +115,6 @@ export default function Footer() {
           </motion.div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
           <p className="text-xs text-gray-500 dark:text-gray-400"> 2026 {tokens.brand.name}. جميع الحقوق محفوظة.</p>
           <div className="flex gap-4">
@@ -118,7 +124,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Scroll to Top */}
       <motion.button onClick={scrollToTop} whileHover={{ scale: 1.1 }} className="absolute bottom-4 right-4 p-2 bg-primary-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all">
         <FaArrowUp className="text-sm" />
       </motion.button>

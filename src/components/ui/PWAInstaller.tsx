@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { FaDownload, FaXmark, FaMobileScreen } from 'react-icons/fa6';
+import { FaDownload, FaXmark, FaMobileScreen, FaShare } from 'react-icons/fa6';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -12,6 +12,7 @@ export default function PWAInstaller() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
     const isInStandaloneMode = () => {
@@ -21,6 +22,10 @@ export default function PWAInstaller() {
     };
     
     setIsStandalone(isInStandaloneMode());
+    
+    // التحقق من iOS
+    const userAgent = navigator.userAgent.toLowerCase();
+    setIsIOS(/iphone|ipad|ipod/.test(userAgent));
 
     const handler = (e: Event) => {
       e.preventDefault();
@@ -33,6 +38,14 @@ export default function PWAInstaller() {
     };
 
     window.addEventListener('beforeinstallprompt', handler);
+    
+    // لـ iOS
+    if (!isInStandaloneMode() && /iphone|ipad|ipod/.test(userAgent)) {
+      const hasShownIOSPrompt = localStorage.getItem('pwa-ios-prompt-shown');
+      if (!hasShownIOSPrompt) {
+        setTimeout(() => setShowPrompt(true), 3000);
+      }
+    }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
@@ -40,23 +53,26 @@ export default function PWAInstaller() {
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      console.log('User accepted install');
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response: ${outcome}`);
+      setDeferredPrompt(null);
+    } else if (isIOS) {
+      alert('لتثبيت التطبيق:\n1. اضغط على زر المشاركة 📤\n2. اختر "إضافة إلى الشاشة الرئيسية"\n3. اضغط "إضافة"');
+    } else {
+      alert('يمكنك تثبيت التطبيق من قائمة المتصفح (⋮) → "تثبيت التطبيق"');
     }
     
-    setDeferredPrompt(null);
     setShowPrompt(false);
     localStorage.setItem('pwa-prompt-shown', 'true');
+    localStorage.setItem('pwa-ios-prompt-shown', 'true');
   };
 
   const handleDismiss = () => {
     setShowPrompt(false);
     localStorage.setItem('pwa-prompt-shown', 'true');
+    localStorage.setItem('pwa-ios-prompt-shown', 'true');
   };
 
   if (isStandalone) return null;
@@ -73,12 +89,14 @@ export default function PWAInstaller() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4">
             <div className="flex items-start gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shrink-0">
-                <FaMobileScreen className="text-white text-2xl" />
+                {isIOS ? <FaShare className="text-white text-2xl" /> : <FaMobileScreen className="text-white text-2xl" />}
               </div>
               <div className="flex-1">
                 <h4 className="font-bold text-gray-900 dark:text-white mb-1">تثبيت التطبيق</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  ثبت مؤسسة إنسان على جهازك للوصول السريع وتجربة أفضل
+                  {isIOS 
+                    ? 'أضف مؤسسة إنسان إلى شاشتك الرئيسية للوصول السريع' 
+                    : 'ثبت مؤسسة إنسان على جهازك للوصول السريع وتجربة أفضل'}
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -86,7 +104,7 @@ export default function PWAInstaller() {
                     className="flex-1 py-2 px-3 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors flex items-center justify-center gap-2"
                   >
                     <FaDownload className="text-xs" />
-                    تثبيت
+                    {isIOS ? 'كيفية التثبيت' : 'تثبيت'}
                   </button>
                   <button
                     onClick={handleDismiss}

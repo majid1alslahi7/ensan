@@ -44,8 +44,8 @@ export const siteData = {
       ]},
       { name: 'البرامج', href: '/programs', icon: FaDiagramProject },
       { name: 'أبرز المشاريع', href: '/projects', icon: FaStar },
-      { name: 'الإعلام', href: '/media', icon: FaNewspaper, children: [
-        { name: 'الأخبار', href: '/media/news' },
+      { name: 'الأخبار', href: '/media/news', icon: FaNewspaper },
+      { name: 'الإعلام', href: '/media', icon: FaImages, children: [
         { name: 'قصص النجاح', href: '/media/success-stories' },
         { name: 'معرض الصور', href: '/media/gallery' },
         { name: 'الفيديو', href: '/media/videos' },

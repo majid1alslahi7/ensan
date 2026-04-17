@@ -7,6 +7,8 @@
   "background_color": "#1A5F7A",
   "theme_color": "#1A5F7A",
   "orientation": "portrait-primary",
+  "id": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -21,21 +23,6 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshot1.jpg",
-      "sizes": "1280x720",
-      "type": "image/jpeg",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/screenshot2.jpg",
-      "sizes": "720x1280",
-      "type": "image/jpeg",
-      "form_factor": "narrow"
-    }
-  ],
-  "categories": ["charity", "nonprofit", "education", "health", "social"],
   "dir": "rtl",
   "lang": "ar",
   "prefer_related_applications": false
