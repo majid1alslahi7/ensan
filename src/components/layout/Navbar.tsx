@@ -24,7 +24,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // إغلاق القائمة الجانبية بزر الرجوع (Escape)
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsOpen(false);
@@ -33,7 +32,6 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', handleEscape);
   }, []);
 
-  // إغلاق القائمة الجانبية عند النقر خارجها
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
@@ -46,7 +44,6 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  // إغلاق القائمة عند تغيير المسار
   useEffect(() => {
     setIsOpen(false);
     setOpenDropdown('');
@@ -65,24 +62,21 @@ export default function Navbar() {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl py-2' : 'bg-white dark:bg-gray-900 py-4'} border-b border-gray-200/50 dark:border-gray-800/50`}>
       <div className="container-page">
         <div className="flex justify-between items-center">
-          {/* Logo - أكبر وأوضح */}
           <Link href="/" className="flex items-center gap-4 group">
             <motion.div whileHover={{ rotate: 10, scale: 1.1 }} transition={{ type: 'spring', stiffness: 300 }} className="relative">
               <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 p-0.5 shadow-lg group-hover:shadow-xl transition-all">
                 <div className="w-full h-full rounded-xl bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
-                  <Image src="/icon1.png" alt="Eusran Logo" width={60} height={60} className="w-full h-full object-cover" />
+                  <Image src="/icon1.png" alt="Logo" width={60} height={60} className="w-full h-full object-cover" />
                 </div>
               </div>
             </motion.div>
             <div>
-              <span className="text-xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+              <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
                 {tokens.brand.name}
               </span>
-              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 -mt-1">{tokens.brand.sloganAr}</p>
             </div>
           </Link>
 
-          {/* Desktop Navigation مع Dropdown بالـ hover */}
           <div className="hidden lg:flex items-center gap-1">
             {siteData.navigation.main.map((item: any) => {
               const hasChildren = item.children && item.children.length > 0;
@@ -143,7 +137,6 @@ export default function Navbar() {
               );
             })}
             
-            {/* Theme Toggle */}
             <motion.button
               whileHover={{ scale: 1.1, rotate: 15 }}
               whileTap={{ scale: 0.9 }}
@@ -154,7 +147,6 @@ export default function Navbar() {
             </motion.button>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center gap-3">
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={toggleTheme} className="p-3 rounded-xl bg-gray-100 dark:bg-gray-800">
               {mode === 'light' ? <FaMoon /> : <FaSun />}
@@ -166,11 +158,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Sidebar - مع خلفية شفافة تغلق عند اللمس */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Overlay - يغلق عند اللمس */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -179,7 +169,6 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
             />
             
-            {/* Sidebar */}
             <motion.div
               ref={sidebarRef}
               initial={{ x: '100%' }}
@@ -189,7 +178,6 @@ export default function Navbar() {
               className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-2xl z-50 lg:hidden overflow-hidden"
             >
               <div className="flex flex-col h-full">
-                {/* Sidebar Header */}
                 <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 p-0.5">
@@ -204,7 +192,6 @@ export default function Navbar() {
                   </button>
                 </div>
                 
-                {/* Sidebar Content */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-2">
                   {siteData.navigation.main.map((item: any) => {
                     const hasChildren = item.children && item.children.length > 0;
