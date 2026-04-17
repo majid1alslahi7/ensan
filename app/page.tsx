@@ -84,14 +84,13 @@ export default function HomePage() {
     <main className="overflow-x-hidden">
       <Toaster position="top-center" />
       
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/90 via-primary-800/80 to-secondary-900/90 z-0" />
-        <div className="absolute inset-0 bg-[url('/icon1.png')] bg-center bg-no-repeat opacity-10 z-0" style={{ backgroundSize: '400px' }} />
-        
+      {/* Hero Section - بدون صورة خلفية */}
+      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-600 via-primary-700 to-secondary-700">
+        {/* تأثيرات حركية فقط */}
         <div className="absolute inset-0 overflow-hidden z-0">
           <motion.div animate={{ scale: [1, 1.2, 1], rotate: [0, 45, 0] }} transition={{ duration: 20, repeat: Infinity }} className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
           <motion.div animate={{ scale: [1.2, 1, 1.2], rotate: [45, 0, 45] }} transition={{ duration: 25, repeat: Infinity }} className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-secondary-500/10 blur-3xl" />
+          <motion.div animate={{ scale: [1, 1.3, 1], rotate: [45, 90, 45] }} transition={{ duration: 30, repeat: Infinity }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-accent-500/5 blur-3xl" />
         </div>
         
         <div className="relative z-10 container-page text-center text-white">
@@ -131,7 +130,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* Stats Section */}
+      {/* باقي الأقسام كما هي */}
       <section className="section-py bg-gray-50 dark:bg-gray-900">
         <div className="container-page">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">أثرنا في أرقام</motion.h2>
@@ -149,7 +148,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* معرض الصور - يوجه لصفحة المعرض عند الضغط */}
+      {/* معرض الصور */}
       <section className="section-py bg-white dark:bg-gray-950">
         <div className="container-page">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title flex items-center justify-center gap-3">
@@ -185,28 +184,18 @@ export default function HomePage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all z-15" />
               </motion.div>
             </Link>
             
-            <button 
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all"
-            >
+            <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all">
               <FaChevronRight className="text-white text-xl" />
             </button>
-            <button 
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all"
-            >
+            <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all">
               <FaChevronLeft className="text-white text-xl" />
             </button>
             
             <div className="absolute bottom-4 right-4 z-30">
-              <button 
-                onClick={(e) => { e.stopPropagation(); setIsAutoPlaying(!isAutoPlaying); }}
-                className="p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all"
-              >
+              <button onClick={(e) => { e.stopPropagation(); setIsAutoPlaying(!isAutoPlaying); }} className="p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all">
                 {isAutoPlaying ? <FaPause className="text-white" /> : <FaPlay className="text-white" />}
               </button>
             </div>
@@ -230,7 +219,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Programs Preview */}
+      {/* باقي الأقسام */}
       <section className="section-py bg-gray-50 dark:bg-gray-900">
         <div className="container-page">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">برامجنا وقطاعاتنا</motion.h2>
@@ -256,7 +245,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Latest News */}
       <section className="section-py">
         <div className="container-page">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">آخر الأخبار</motion.h2>
@@ -281,7 +269,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Quick Links Grid */}
       <section className="section-py bg-gray-50 dark:bg-gray-900">
         <div className="container-page">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">روابط سريعة</motion.h2>
