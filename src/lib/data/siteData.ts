@@ -43,7 +43,7 @@ export const siteData = {
         { name: 'أين نعمل', href: '/about/locations' }
       ]},
       { name: 'البرامج', href: '/programs', icon: FaDiagramProject },
-      { name: 'أبرز المشاريع', href: '/projects', icon: FaStar },
+      { name: 'المشاريع', href: '/projects', icon: FaStar },
       { name: 'الأخبار', href: '/media/news', icon: FaNewspaper },
       { name: 'الإعلام', href: '/media', icon: FaImages, children: [
         { name: 'قصص النجاح', href: '/media/success-stories' },

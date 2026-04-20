@@ -1,6 +1,6 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { Toaster } from 'react-hot-toast';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,85 +10,62 @@ import {
   FaMagnifyingGlass, FaWheatAwn, FaHouseChimney, FaBook, FaDroplet,
   FaCalendar, FaChevronLeft, FaChevronRight, FaPause, FaPlay, FaImages
 } from 'react-icons/fa6';
-import { siteData } from '@/lib/data/siteData';
 import { tokens } from '@/lib/tokens';
-
-const galleryImages = [
-  { src: '/images/gallery1.jpg', alt: 'مشروع الأمن الغذائي' },
-  { src: '/images/gallery2.jpg', alt: 'توزيع المساعدات الإنسانية' },
-  { src: '/images/gallery3.jpg', alt: 'حملة طبية مجانية' },
-  { src: '/images/gallery4.jpg', alt: 'مشروع المياه والإصحاح البيئي' },
-  { src: '/images/gallery5.jpg', alt: 'دعم التعليم للأطفال' },
-  { src: '/images/gallery6.jpg', alt: 'فريق المتطوعين الميداني' },
-];
+import { newsAPI, programsAPI, statsAPI, galleryAPI } from '@/lib/api';
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const slideInterval = useRef<NodeJS.Timeout | null>(null);
-
-  const stats = [
-    { icon: FaFolderOpen, label: 'مشروع', value: siteData.stats.projects, color: '#1A5F7A' },
-    { icon: FaUsers, label: 'مستفيد', value: siteData.stats.individuals.toLocaleString(), color: '#159C4B' },
-    { icon: FaGlobe, label: 'محافظة', value: siteData.stats.locations, color: '#D4621A' },
-    { icon: FaHeart, label: 'متطوع', value: siteData.stats.volunteers, color: '#EF4444' }
-  ];
-
-  const quickLinks = [
-    { title: 'من نحن', href: '/about', icon: FaUsers, color: '#1A5F7A', desc: 'تعرف على رؤيتنا ورسالتنا وقيمنا' },
-    { title: 'البرامج', href: '/programs', icon: FaWheatAwn, color: '#159C4B', desc: '7 قطاعات رئيسية للدعم الشامل' },
-    { title: 'المشاريع', href: '/projects', icon: FaFolderOpen, color: '#D4621A', desc: 'أبرز مشاريعنا الإنسانية' },
-    { title: 'الإعلام', href: '/media', icon: FaNewspaper, color: '#3B82F6', desc: 'أخبار، صور، فيديوهات' },
-    { title: 'التقارير', href: '/reports', icon: FaChartPie, color: '#8B5CF6', desc: 'تقاريرنا وإنجازاتنا' },
-    { title: 'تواصل معنا', href: '/contact', icon: FaPhone, color: '#EF4444', desc: 'نحن هنا للإجابة على استفساراتكم' }
-  ];
-
-  const news = [
-    { title: 'توزيع 5000 سلة غذائية في الضالع', date: '2026-04-15', icon: FaNewspaper },
-    { title: 'اختتام دورة تدريبية في التمكين الاقتصادي', date: '2026-04-10', icon: FaStar },
-    { title: 'حملة طبية مجانية في مديرية جحاف', date: '2026-04-05', icon: FaHeart }
-  ];
-
-  const programsPreview = [
-    { id: 'food-security', name: 'الأمن الغذائي', icon: FaWheatAwn, color: '#1A5F7A', desc: 'تعزيز الأمن الغذائي وتحسين سبل العيش' },
-    { id: 'shelter', name: 'المأوى', icon: FaHouseChimney, color: '#159C4B', desc: 'الاستجابة لاحتياجات النازحين' },
-    { id: 'education', name: 'التعليم', icon: FaBook, color: '#D4621A', desc: 'خفض معدلات الأمية والانقطاع عن التعليم' },
-    { id: 'water', name: 'المياه والإصحاح', icon: FaDroplet, color: '#3B82F6', desc: 'تحسين الوصول للمياه والصرف الصحي' }
-  ];
+  const [news, setNews] = useState<any[]>([]);
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [stats, setStats] = useState<any[]>([]);
+  const [gallery, setGallery] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isAutoPlaying) {
-      slideInterval.current = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % galleryImages.length);
-      }, 4000);
+    async function fetchData() {
+      try {
+        const [newsData, programsData, statsData, galleryData] = await Promise.all([
+          newsAPI.getFeatured(),
+          programsAPI.getAll(),
+          statsAPI.getHomeStats(),
+          galleryAPI.getAll(),
+        ]);
+        setNews(newsData);
+        setPrograms(programsData);
+        setStats(statsData);
+        setGallery(galleryData.data || galleryData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
     }
-    return () => {
-      if (slideInterval.current) clearInterval(slideInterval.current);
-    };
-  }, [isAutoPlaying]);
+    fetchData();
+  }, []);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % galleryImages.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 8000);
-  };
+  useEffect(() => {
+    if (gallery.length === 0) return;
+    const interval = setInterval(() => {
+      if (isAutoPlaying) {
+        setCurrentSlide((prev) => (prev + 1) % gallery.length);
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, gallery.length]);
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 8000);
-  };
+  const iconMap: any = { FaWheatAwn, FaHouseChimney, FaBook, FaDroplet, FaHeart };
 
   return (
     <main className="overflow-x-hidden">
       <Toaster position="top-center" />
       
+      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-600 via-primary-700 to-secondary-700">
         <div className="absolute inset-0 overflow-hidden z-0">
           <motion.div animate={{ scale: [1, 1.2, 1], rotate: [0, 45, 0] }} transition={{ duration: 20, repeat: Infinity }} className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
           <motion.div animate={{ scale: [1.2, 1, 1.2], rotate: [45, 0, 45] }} transition={{ duration: 25, repeat: Infinity }} className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-secondary-500/10 blur-3xl" />
-          <motion.div animate={{ scale: [1, 1.3, 1], rotate: [45, 90, 45] }} transition={{ duration: 30, repeat: Infinity }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-accent-500/5 blur-3xl" />
         </div>
         
         <div className="relative z-10 container-page text-center text-white">
@@ -120,15 +97,9 @@ export default function HomePage() {
             <Link href="/contact/contribute"><motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn border-2 border-white text-white hover:bg-white hover:text-primary-600">تبرع الآن</motion.span></Link>
           </motion.div>
         </div>
-        
-        <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 z-10">
-          <div className="w-7 h-12 border-2 border-white/30 rounded-full flex justify-center">
-            <motion.div animate={{ y: [0, 16, 0] }} transition={{ duration: 2, repeat: Infinity }} className="w-1.5 h-1.5 bg-white rounded-full mt-2" />
-          </div>
-        </motion.div>
       </section>
 
-      {/* باقي الأقسام - مختصرة للتركيز على الإصلاح */}
+      {/* Stats Section */}
       <section className="section-py bg-gray-50 dark:bg-gray-900">
         <div className="container-page">
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">أثرنا في أرقام</motion.h2>
@@ -136,59 +107,123 @@ export default function HomePage() {
             {stats.map((stat, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} whileHover={{ y: -8 }} className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: stat.color + '20' }}>
-                  <stat.icon className="text-3xl" style={{ color: stat.color }} />
+                  {stat.icon === 'FaFolderOpen' && <FaFolderOpen className="text-3xl" style={{ color: stat.color }} />}
+                  {stat.icon === 'FaUsers' && <FaUsers className="text-3xl" style={{ color: stat.color }} />}
+                  {stat.icon === 'FaGlobe' && <FaGlobe className="text-3xl" style={{ color: stat.color }} />}
+                  {stat.icon === 'FaHeart' && <FaHeart className="text-3xl" style={{ color: stat.color }} />}
                 </div>
-                <h3 className="text-4xl font-bold mb-2">{stat.value}</h3>
-                <p className="text-gray-500 dark:text-gray-400">{stat.label}</p>
+                <h3 className="text-4xl font-bold mb-2">{stat.value.toLocaleString()}</h3>
+                <p className="text-gray-500 dark:text-gray-400">{stat.label_ar}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section-py bg-white dark:bg-gray-950">
-        <div className="container-page">
-          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title flex items-center justify-center gap-3">
-            <FaImages className="text-primary-500" /> معرض الصور <FaImages className="text-primary-500" />
-          </motion.h2>
-          <div className="relative max-w-5xl mx-auto">
-            <Link href="/media/gallery">
-              <motion.div 
-                key={currentSlide}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.5 }}
-                className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-2xl cursor-pointer group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-20">
-                  <h3 className="text-xl md:text-2xl font-bold">{galleryImages[currentSlide].alt}</h3>
-                  <p className="text-sm opacity-80 mt-2 flex items-center gap-1">
-                    اضغط للمشاهدة <FaArrowLeft className="text-xs group-hover:translate-x-1 transition-transform" />
-                  </p>
-                </div>
-                <div className="w-full h-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
-                  <Image src={galleryImages[currentSlide].src} alt={galleryImages[currentSlide].alt} width={800} height={500} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-              </motion.div>
-            </Link>
-            <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all"><FaChevronRight className="text-white text-xl" /></button>
-            <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all"><FaChevronLeft className="text-white text-xl" /></button>
-            <div className="absolute bottom-4 right-4 z-30">
-              <button onClick={(e) => { e.stopPropagation(); setIsAutoPlaying(!isAutoPlaying); }} className="p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40 transition-all">{isAutoPlaying ? <FaPause className="text-white" /> : <FaPlay className="text-white" />}</button>
-            </div>
-            <div className="flex justify-center gap-2 mt-4">
-              {galleryImages.map((_, i) => (
-                <button key={i} onClick={() => { setCurrentSlide(i); setIsAutoPlaying(false); setTimeout(() => setIsAutoPlaying(true), 8000); }} className={`h-2 rounded-full transition-all ${i === currentSlide ? 'bg-primary-500 w-8' : 'bg-gray-300 dark:bg-gray-700 w-2'}`} />
-              ))}
+      {/* Gallery Section */}
+      {gallery.length > 0 && (
+        <section className="section-py bg-white dark:bg-gray-950">
+          <div className="container-page">
+            <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title flex items-center justify-center gap-3">
+              <FaImages className="text-primary-500" /> معرض الصور <FaImages className="text-primary-500" />
+            </motion.h2>
+            <div className="relative max-w-5xl mx-auto">
+              <Link href="/media/gallery">
+                <motion.div 
+                  key={currentSlide}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-2xl cursor-pointer group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-20">
+                    <h3 className="text-xl md:text-2xl font-bold">{gallery[currentSlide]?.title_ar}</h3>
+                  </div>
+                  <Image 
+                    src={gallery[currentSlide]?.image_url} 
+                    alt={gallery[currentSlide]?.title_ar} 
+                    width={800} height={500} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
+                </motion.div>
+              </Link>
+              <button onClick={() => setCurrentSlide((prev) => (prev - 1 + gallery.length) % gallery.length)} className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40">
+                <FaChevronRight className="text-white text-xl" />
+              </button>
+              <button onClick={() => setCurrentSlide((prev) => (prev + 1) % gallery.length)} className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40">
+                <FaChevronLeft className="text-white text-xl" />
+              </button>
+              <div className="absolute bottom-4 right-4 z-30">
+                <button onClick={() => setIsAutoPlaying(!isAutoPlaying)} className="p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/40">
+                  {isAutoPlaying ? <FaPause className="text-white" /> : <FaPlay className="text-white" />}
+                </button>
+              </div>
+              <div className="flex justify-center gap-2 mt-4">
+                {gallery.map((_, i) => (
+                  <button key={i} onClick={() => setCurrentSlide(i)} className={`h-2 rounded-full transition-all ${i === currentSlide ? 'bg-primary-500 w-8' : 'bg-gray-300 dark:bg-gray-700 w-2'}`} />
+                ))}
+              </div>
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Programs Preview */}
+      <section className="section-py bg-gray-50 dark:bg-gray-900">
+        <div className="container-page">
+          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">برامجنا وقطاعاتنا</motion.h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {programs.slice(0, 4).map((program) => {
+              const Icon = iconMap[program.icon] || FaHeart;
+              return (
+                <Link key={program.id} href="/programs">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} whileHover={{ y: -5 }} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg text-center h-full">
+                    <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ background: program.color + '20' }}>
+                      <Icon className="text-2xl" style={{ color: program.color }} />
+                    </div>
+                    <h3 className="font-bold mb-2">{program.name_ar}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{program.description}</p>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </div>
           <div className="text-center mt-8">
-            <Link href="/media/gallery" className="btn btn-primary">عرض جميع الصور <FaArrowLeft /></Link>
+            <Link href="/programs" className="btn btn-primary">عرض جميع البرامج <FaArrowLeft /></Link>
           </div>
         </div>
       </section>
+
+      {/* Latest News */}
+      {news.length > 0 && (
+        <section className="section-py">
+          <div className="container-page">
+            <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">آخر الأخبار</motion.h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {news.slice(0, 3).map((item) => (
+                <motion.div key={item.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} whileHover={{ y: -5 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
+                      <FaNewspaper className="text-xl text-primary-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold mb-2">{item.title_ar}</h3>
+                      <p className="text-sm text-gray-500 flex items-center gap-1">
+                        <FaCalendar /> {new Date(item.created_at).toLocaleDateString('ar-SA')}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <Link href="/media/news" className="btn btn-outline border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white">عرض جميع الأخبار <FaArrowLeft /></Link>
+            </div>
+          </div>
+        </section>
+      )}
     </main>
   );
 }

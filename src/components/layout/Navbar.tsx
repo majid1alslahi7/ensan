@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { FaBars, FaXmark, FaChevronDown, FaMoon, FaSun } from 'react-icons/fa6';
 import { useTheme } from '@/components/ui/ThemeProvider';
-import { tokens } from '@/lib/tokens';
 import { siteData } from '@/lib/data/siteData';
 
 export default function Navbar() {
@@ -59,21 +58,19 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl py-2' : 'bg-white dark:bg-gray-900 py-4'} border-b border-gray-200/50 dark:border-gray-800/50`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl py-2' : 'bg-white dark:bg-gray-900 py-2'} border-b border-gray-200/50 dark:border-gray-800/50`}>
       <div className="container-page">
         <div className="flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-4 group">
-            <motion.div whileHover={{ rotate: 10, scale: 1.1 }} transition={{ type: 'spring', stiffness: 300 }} className="relative">
-              <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 p-0.5 shadow-lg group-hover:shadow-xl transition-all">
-                <div className="w-full h-full rounded-xl bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
-                  <Image src="/icon1.png" alt="Logo" width={60} height={60} className="w-full h-full object-cover" />
-                </div>
-              </div>
-            </motion.div>
-            <div>
-              <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                {tokens.brand.name}
-              </span>
+          {/* شعار - صورة مستطيلة فقط بدون أي نص */}
+          <Link href="/" className="flex items-center">
+            <div className="relative h-10 md:h-12 w-48 md:w-56">
+              <Image 
+                src="/logo-wide.png" 
+                alt="مؤسسة إنسان للأعمال الإنسانية" 
+                fill
+                className="object-contain object-right" 
+                priority={true}
+              />
             </div>
           </Link>
 
@@ -179,13 +176,13 @@ export default function Navbar() {
             >
               <div className="flex flex-col h-full">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 p-0.5">
-                      <div className="w-full h-full rounded-lg bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
-                        <Image src="/icon1.png" alt="Logo" width={32} height={32} className="w-full h-full object-cover" />
-                      </div>
-                    </div>
-                    <span className="font-bold text-gray-900 dark:text-white">{tokens.brand.name}</span>
+                  <div className="relative h-8 w-40">
+                    <Image 
+                      src="/logo-wide.png" 
+                      alt="مؤسسة إنسان" 
+                      fill
+                      className="object-contain object-right" 
+                    />
                   </div>
                   <button onClick={() => setIsOpen(false)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
                     <FaXmark className="text-xl" />

@@ -1,17 +1,36 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { FaList, FaMapPin, FaUsers, FaCalendar } from 'react-icons/fa6';
-
-const projects = [
-  { id: 1, title: 'مشروع تعزيز الأمن الغذائي', location: 'الضالع - مأرب', beneficiaries: 254048, year: '2025-2026', status: 'جاري', color: '#1A5F7A' },
-  { id: 2, title: 'مشروع المياه والإصحاح البيئي', location: 'الضالع', beneficiaries: 21161, year: '2025', status: 'مكتمل', color: '#3B82F6' },
-  { id: 3, title: 'مشروع دعم التعليم', location: 'الضالع', beneficiaries: 10640, year: '2024-2025', status: 'مكتمل', color: '#D4621A' },
-  { id: 4, title: 'مشروع الحماية المتكاملة', location: 'الضالع - صنعاء', beneficiaries: 2352, year: '2025-2026', status: 'جاري', color: '#8B5CF6' },
-  { id: 5, title: 'مشروع المأوى للنازحين', location: 'الضالع', beneficiaries: 5600, year: '2024', status: 'مكتمل', color: '#159C4B' },
-  { id: 6, title: 'مشروع الاستجابة الطارئة', location: 'مأرب - تعز', beneficiaries: 15000, year: '2026', status: 'جاري', color: '#EF4444' },
-];
+import Link from 'next/link';
+import { FaList, FaMapPin, FaUsers, FaCalendar, FaArrowLeft } from 'react-icons/fa6';
+import { projectsAPI } from '@/lib/api';
 
 export default function ProjectsPage() {
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const data = await projectsAPI.getAll();
+        setProjects(data.data || data);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProjects();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="pt-navbar container-page section-py text-center">
+        <p className="text-gray-500">جاري تحميل المشاريع...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-navbar">
       <section className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white section-py">
@@ -34,24 +53,33 @@ export default function ProjectsPage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden card-hover"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all"
               >
-                <div className="h-2" style={{ background: project.color }} />
+                <div className="h-2" style={{ background: project.program?.color || '#1A5F7A' }} />
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: project.color + '20' }}>
-                      <FaList className="text-2xl" style={{ color: project.color }} />
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: (project.program?.color || '#1A5F7A') + '20' }}>
+                      <FaList className="text-2xl" style={{ color: project.program?.color || '#1A5F7A' }} />
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${project.status === 'جاري' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
-                      {project.status}
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${project.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
+                      {project.status === 'active' ? 'جاري' : 'مكتمل'}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold mb-3">{project.title}</h3>
-                  <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                  <h3 className="text-xl font-bold mb-3">{project.title_ar}</h3>
+                  <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
                     <div className="flex items-center gap-2"><FaMapPin className="text-primary-500" /> {project.location}</div>
-                    <div className="flex items-center gap-2"><FaUsers className="text-primary-500" /> {project.beneficiaries.toLocaleString()} مستفيد</div>
-                    <div className="flex items-center gap-2"><FaCalendar className="text-primary-500" /> {project.year}</div>
+                    <div className="flex items-center gap-2"><FaUsers className="text-primary-500" /> {project.beneficiaries?.toLocaleString()} مستفيد</div>
+                    {project.program && (
+                      <div className="flex items-center gap-2"><FaList className="text-primary-500" /> {project.program.name_ar}</div>
+                    )}
                   </div>
+                  {/* رابط التفاصيل */}
+                  <Link 
+                    href={`/projects/${project.id}`}
+                    className="inline-flex items-center gap-2 text-primary-500 font-medium hover:gap-3 transition-all"
+                  >
+                    تفاصيل المشروع <FaArrowLeft className="text-sm" />
+                  </Link>
                 </div>
               </motion.div>
             ))}

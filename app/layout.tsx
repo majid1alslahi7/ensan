@@ -4,100 +4,38 @@ import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import PWAInstaller from "@/components/ui/PWAInstaller";
+import ThemeScript from "@/components/ui/ThemeScript";
 import "@/styles/globals.css";
 
+const SITE_URL = 'https://insaaan.org';
+const SITE_NAME = 'مؤسسة إنسان للأعمال الإنسانية';
+const SITE_DESCRIPTION = 'مؤسسة وطنية إنسانية تنموية غير حكومية مرخصة برقم (88) - معاً نصنع الأمل';
+const CONTACT_EMAIL = 'info@insaaan.org';
+
 export const metadata: Metadata = {
-  title: { default: "مؤسسة إنسان للأعمال الإنسانية", template: "%s | مؤسسة إنسان" },
-  description: "مؤسسة إنسان للأعمال الإنسانية - مؤسسة وطنية إنسانية تنموية",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
   manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "مؤسسة إنسان",
-  },
-  applicationName: "مؤسسة إنسان",
-  keywords: ["إنساني", "إغاثة", "تنمية", "يمن", "خيرية"],
-  authors: [{ name: "مؤسسة إنسان للأعمال الإنسانية" }],
-  creator: "مؤسسة إنسان",
-  publisher: "مؤسسة إنسان",
-  formatDetection: {
-    telephone: true,
-    date: true,
-    address: true,
-    email: true,
-    url: true,
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  openGraph: {
-    title: "مؤسسة إنسان للأعمال الإنسانية",
-    description: "مؤسسة وطنية إنسانية تنموية غير حكومية",
-    type: "website",
-    locale: "ar_SA",
-    siteName: "مؤسسة إنسان",
-    images: [{ url: "/icon-512.png", width: 512, height: 512, alt: "مؤسسة إنسان" }],
-  },
-  twitter: {
-    card: "summary",
-    title: "مؤسسة إنسان للأعمال الإنسانية",
-    description: "مؤسسة وطنية إنسانية تنموية غير حكومية",
-    images: ["/icon-512.png"],
-  },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "مؤسسة إنسان" },
+  applicationName: SITE_NAME,
+  keywords: ["إنساني", "إغاثة", "تنمية", "يمن", "خيرية", "إنسان", "insaaan", "مؤسسة إنسان", "أعمال إنسانية", "الضالع"],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  formatDetection: { telephone: true, date: true, address: true, email: true, url: true },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
+  openGraph: { title: SITE_NAME, description: SITE_DESCRIPTION, url: SITE_URL, siteName: SITE_NAME, images: [{ url: "/icon-512.png", width: 512, height: 512, alt: SITE_NAME, type: "image/png" }], locale: "ar_SA", type: "website", emails: [CONTACT_EMAIL] },
+  twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_DESCRIPTION, images: ["/icon-512.png"], creator: "@insaaan" },
 };
 
-export const viewport: Viewport = {
-  themeColor: "#1A5F7A",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
+export const viewport: Viewport = { themeColor: "#1A5F7A", width: "device-width", initialScale: 1, maximumScale: 5, userScalable: true };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" className={allFontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
-      <head>
-        <link rel="apple-touch-icon" href="/icon-192.png" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var mode = localStorage.getItem("theme-mode");
-                  var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-                  var theme = mode || (systemDark ? "dark" : "light");
-                  document.documentElement.classList.add(theme);
-                } catch (e) {}
-                
-                if ('serviceWorker' in navigator) {
-                  window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js').then(
-                      function(registration) {
-                        console.log('Service Worker registered');
-                      },
-                      function(err) {
-                        console.log('Service Worker failed:', err);
-                      }
-                    );
-                  });
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body className={cairo.className}>
-        <ThemeProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <PWAInstaller />
-        </ThemeProvider>
-      </body>
+      <head><link rel="apple-touch-icon" href="/icon-192.png" /><link rel="canonical" href={SITE_URL} /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /></head>
+      <body className={cairo.className}><ThemeProvider><Navbar /><main>{children}</main><Footer /><PWAInstaller /></ThemeProvider><ThemeScript /></body>
     </html>
   );
 }
