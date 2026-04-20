@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'insaaan.org' },
       { protocol: 'https', hostname: 'system.insaaan.org' },
-      { protocol: 'https', hostname: 'admin.insaaan.org' },
     ],
   },
   typescript: {
