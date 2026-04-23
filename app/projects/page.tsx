@@ -1,136 +1,180 @@
-'use client';
-import { Suspense, useState, useEffect } from 'react';
-import { motion } from 'motion/react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
-import { FaList, FaMapPin, FaUsers, FaArrowLeft } from 'react-icons/fa6';
-import { programsAPI, projectsAPI } from '@/lib/api';
-import { formatNumber, imageUrl } from '@/lib/format';
+import Link from 'next/link';
+import { FaArrowLeft, FaCalendar, FaList, FaMapPin, FaUsers } from 'react-icons/fa6';
 
-export default function ProjectsPage() {
-  return (
-    <Suspense fallback={<ProjectsLoading />}>
-      <ProjectsContent />
-    </Suspense>
-  );
+import { collection, fetchJSON } from '@/lib/api/server';
+import { formatDate, formatNumber, primaryImage } from '@/lib/format';
+
+type ProjectProgram = {
+  color?: string | null;
+  id?: number | string;
+  name?: string;
+  name_ar?: string;
+};
+
+type ProjectItem = {
+  beneficiaries?: number;
+  created_at?: string;
+  end_date?: string | null;
+  featured?: boolean;
+  gallery?: string[] | null;
+  id: number | string;
+  image?: string | null;
+  location?: string;
+  program?: ProjectProgram | null;
+  start_date?: string | null;
+  status?: string;
+  title?: string;
+  title_ar?: string;
+};
+
+type ProgramItem = {
+  id: number | string;
+  name?: string;
+  name_ar?: string;
+};
+
+async function getProjects(programId?: string): Promise<ProjectItem[]> {
+  const query = programId ? `?program_id=${encodeURIComponent(programId)}&per_page=50` : '';
+  const payload = await fetchJSON<ProjectItem[] | { data?: ProjectItem[] }>(`/projects${query}`, 900);
+  return collection<ProjectItem>(payload);
 }
 
-function ProjectsLoading() {
-  return (
-    <div className="pt-navbar container-page section-py text-center">
-      <p className="text-gray-500">جاري تحميل المشاريع...</p>
-    </div>
-  );
+async function getPrograms(): Promise<ProgramItem[]> {
+  const payload = await fetchJSON<ProgramItem[] | { data?: ProgramItem[] }>('/programs', 1800);
+  return collection<ProgramItem>(payload);
 }
 
-function ProjectsContent() {
-  const searchParams = useSearchParams();
-  const programId = searchParams.get('program_id');
-  const [projects, setProjects] = useState<any[]>([]);
-  const [program, setProgram] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ program_id?: string }>;
+}) {
+  const { program_id: programId } = await searchParams;
+  const [projects, programs] = await Promise.all([
+    getProjects(programId),
+    programId ? getPrograms() : Promise.resolve([]),
+  ]);
 
-  useEffect(() => {
-    async function fetchProjects() {
-      try {
-        const [projectsData, programData] = await Promise.all([
-          projectsAPI.getAll(programId ? { program_id: programId, per_page: 50 } : undefined),
-          programId ? programsAPI.getAll() : Promise.resolve([]),
-        ]);
-
-        setProjects(projectsData);
-        setProgram(programId ? programData.find((item: any) => String(item.id) === String(programId)) || null : null);
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchProjects();
-  }, [programId]);
-
-  if (loading) {
-    return <ProjectsLoading />;
-  }
+  const program = programId
+    ? programs.find((item) => String(item.id) === String(programId)) ?? null
+    : null;
 
   const pageTitle = program ? `مشاريع ${program.name_ar || program.name}` : 'أبرز المشاريع';
   const pageDescription = program
     ? `المشاريع المرتبطة ببرنامج ${program.name_ar || program.name}`
-    : 'تعرف على أبرز مشاريعنا الإنسانية والتنموية';
+    : 'مشاريع إنسانية وتنموية مع صور رئيسية واضحة ومعارض صور في صفحات التفاصيل.';
 
   return (
     <div className="pt-navbar">
-      <section className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white section-py">
+      <section className="section-py overflow-hidden bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_34%),linear-gradient(135deg,#1A5F7A_0%,#159C4B_100%)] text-white">
         <div className="container-page text-center">
-          <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="section-title text-white">
-            {pageTitle}
-          </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="section-subtitle text-white/90">
-            {pageDescription}
-          </motion.p>
-          {program && (
-            <Link href="/programs" className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold text-white hover:bg-white/25">
-              <FaArrowLeft /> العودة للبرامج
+          <h1 className="section-title text-white">{pageTitle}</h1>
+          <p className="section-subtitle text-white/90">{pageDescription}</p>
+          {program ? (
+            <Link
+              href="/programs"
+              className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold text-white hover:bg-white/25"
+            >
+              <FaArrowLeft />
+              العودة للبرامج
             </Link>
-          )}
+          ) : null}
         </div>
       </section>
 
-      <section className="section-py bg-gray-50 dark:bg-gray-900">
+      <section className="section-py bg-gray-50 dark:bg-gray-950">
         <div className="container-page">
           {projects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project, i) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all"
-              >
-                <div className="h-2" style={{ background: project.program?.color || '#1A5F7A' }} />
-                {project.image && (
-                  <div className="relative h-44">
-                    <Image src={imageUrl(project.image)} alt={project.title_ar || 'مشروع'} fill className="object-cover" />
-                  </div>
-                )}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: (project.program?.color || '#1A5F7A') + '20' }}>
-                      <FaList className="text-2xl" style={{ color: project.program?.color || '#1A5F7A' }} />
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${project.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
-                      {project.status === 'active' ? 'جاري' : 'مكتمل'}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-bold mb-3">{project.title_ar}</h3>
-                  <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
-                    <div className="flex items-center gap-2"><FaMapPin className="text-primary-500" /> {project.location}</div>
-                    <div className="flex items-center gap-2"><FaUsers className="text-primary-500" /> {formatNumber(project.beneficiaries)} مستفيد</div>
-                    {project.program && (
-                      <div className="flex items-center gap-2"><FaList className="text-primary-500" /> {project.program.name_ar}</div>
-                    )}
-                  </div>
-                  {/* رابط التفاصيل */}
-                  <Link 
-                    href={`/projects/${project.id}`}
-                    className="inline-flex items-center gap-2 text-primary-500 font-medium hover:gap-3 transition-all"
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {projects.map((project) => {
+                const cover = primaryImage(project.image, project.gallery);
+                const programName = project.program?.name_ar || project.program?.name;
+
+                return (
+                  <article
+                    key={project.id}
+                    className="group overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900"
                   >
-                    تفاصيل المشروع <FaArrowLeft className="text-sm" />
-                  </Link>
-                </div>
-              </motion.div>
-              ))}
+                    <Link href={`/projects/${project.id}`} className="block">
+                      <div className="relative h-60 overflow-hidden">
+                        <Image
+                          src={cover}
+                          alt={project.title_ar || project.title || 'مشروع'}
+                          fill
+                          className="object-cover transition duration-500 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute left-4 top-4 flex gap-2">
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                              project.status === 'active'
+                                ? 'bg-emerald-500/90 text-white'
+                                : 'bg-slate-900/75 text-white'
+                            }`}
+                          >
+                            {project.status === 'active' ? 'جاري التنفيذ' : 'مكتمل'}
+                          </span>
+                          {project.featured ? (
+                            <span className="rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-primary-700">
+                              مميز
+                            </span>
+                          ) : null}
+                        </div>
+                      </div>
+                    </Link>
+
+                    <div className="p-6">
+                      <div className="mb-4 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                        <FaCalendar className="text-primary-500" />
+                        <span>{formatDate(project.start_date || project.created_at)}</span>
+                      </div>
+
+                      <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+                        <Link href={`/projects/${project.id}`} className="hover:text-primary-500">
+                          {project.title_ar || project.title}
+                        </Link>
+                      </h2>
+
+                      <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                        <p className="flex items-center gap-2">
+                          <FaMapPin className="text-primary-500" />
+                          <span>{project.location || 'غير محدد'}</span>
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <FaUsers className="text-primary-500" />
+                          <span>{formatNumber(project.beneficiaries)} مستفيد</span>
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <FaList className="text-primary-500" />
+                          <span>{programName || 'غير مصنف'}</span>
+                        </p>
+                      </div>
+
+                      <Link
+                        href={`/projects/${project.id}`}
+                        className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary-600 transition hover:gap-3 dark:text-primary-300"
+                      >
+                        تفاصيل المشروع
+                        <FaArrowLeft className="text-xs" />
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-10 text-center shadow-lg">
-              <FaList className="text-5xl text-gray-300 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">لا توجد مشاريع حالياً</h2>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
+            <div className="rounded-[2rem] border border-dashed border-gray-300 bg-white p-12 text-center shadow-sm dark:border-gray-700 dark:bg-gray-900">
+              <FaList className="mx-auto mb-4 text-5xl text-gray-300" />
+              <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">لا توجد مشاريع حالياً</h2>
+              <p className="mb-6 text-gray-500 dark:text-gray-400">
                 {program ? 'سيتم عرض مشاريع هذا البرنامج عند إضافتها في النظام.' : 'سيتم عرض المشاريع عند إضافتها في النظام.'}
               </p>
-              <Link href="/programs" className="btn btn-primary">عرض البرامج <FaArrowLeft /></Link>
+              <Link href="/programs" className="btn btn-primary">
+                عرض البرامج
+                <FaArrowLeft />
+              </Link>
             </div>
           )}
         </div>

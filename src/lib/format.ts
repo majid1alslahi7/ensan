@@ -22,6 +22,26 @@ export function imageUrl(value: unknown, fallback = '/images/gallery1.jpg'): str
   return value;
 }
 
+export function galleryImages(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((item): item is string => typeof item === 'string' && item.trim() !== '')
+    .map((item) => item.trim());
+}
+
+export function primaryImage(image: unknown, gallery?: unknown, fallback = '/images/gallery1.jpg'): string {
+  if (typeof image === 'string' && image.trim() !== '') {
+    return image.trim();
+  }
+
+  const images = galleryImages(gallery);
+
+  return images[0] ? imageUrl(images[0], fallback) : fallback;
+}
+
 export function excerpt(value: unknown, maxLength = 160): string {
   const text = typeof value === 'string' ? value.trim() : '';
 
