@@ -66,14 +66,17 @@ export function getTheme(mode: ThemeMode): Theme {
 }
 
 export function generateThemeVariables(theme: Theme): Record<string, string> {
-  const flatten = (obj: any, prefix = '--'): Record<string, string> => {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
+  const flatten = (obj: Record<string, unknown>, prefix = '--'): Record<string, string> => {
+    return Object.entries(obj).reduce<Record<string, string>>((acc, [key, value]) => {
       const varName = prefix + key;
       if (value && typeof value === 'object') {
-        return { ...acc, ...flatten(value, varName + '-') };
+        return { ...acc, ...flatten(value as Record<string, unknown>, `${varName}-`) };
       }
-      return { ...acc, [varName]: value as string };
+      if (typeof value === 'string') {
+        return { ...acc, [varName]: value };
+      }
+      return acc;
     }, {});
   };
-  return flatten(theme);
+  return flatten(theme as unknown as Record<string, unknown>);
 }

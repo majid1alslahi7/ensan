@@ -34,8 +34,13 @@ export const viewport: Viewport = { themeColor: "#1A5F7A", width: "device-width"
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" className={allFontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
-      <head><link rel="apple-touch-icon" href="/icon-192.png" /><link rel="canonical" href={SITE_URL} /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /></head>
-      <body className={cairo.className}><ThemeProvider><Navbar /><main>{children}</main><Footer /><PWAInstaller /></ThemeProvider><ThemeScript /></body>
+      <head>
+        <ThemeScript />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
+      <body className={cairo.className}><ThemeProvider><Navbar /><main>{children}</main><Footer /><PWAInstaller /></ThemeProvider></body>
     </html>
   );
 }

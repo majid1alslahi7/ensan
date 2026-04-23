@@ -1,55 +1,54 @@
-'use client';
-import { useEffect } from 'react';
-
 const LEGACY_CACHE_PREFIXES = ['eusran-', 'ensan-', 'workbox-'];
 const SW_CLEANUP_KEY = 'ensan-sw-cleanup-complete';
 
 export default function ThemeScript() {
-  useEffect(() => {
-    // تطبيق الثيم
-    try {
-      const mode = localStorage.getItem("theme-mode");
-      const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const theme = mode || (systemDark ? "dark" : "light");
-      document.documentElement.classList.add(theme);
-    } catch {}
-
-    const cleanupLegacyServiceWorkers = async () => {
+  const script = `
+    (function () {
       try {
-        const registrations = 'serviceWorker' in navigator
-          ? await navigator.serviceWorker.getRegistrations()
-          : [];
+        var mode = localStorage.getItem('theme-mode');
+        var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = mode || (systemDark ? 'dark' : 'light');
+        document.documentElement.classList.add(theme);
+      } catch {}
 
-        const hadLegacyServiceWorker = registrations.length > 0;
+      (async function cleanupLegacyServiceWorkers() {
+        try {
+          var registrations = 'serviceWorker' in navigator
+            ? await navigator.serviceWorker.getRegistrations()
+            : [];
+          var hadLegacyServiceWorker = registrations.length > 0;
 
-        await Promise.all(
-          registrations.map((registration) => registration.unregister())
-        );
+          await Promise.all(registrations.map(function (registration) {
+            return registration.unregister();
+          }));
 
-        if ('caches' in window) {
-          const cacheNames = await caches.keys();
-          const staleCaches = cacheNames.filter((cacheName) =>
-            LEGACY_CACHE_PREFIXES.some((prefix) => cacheName.startsWith(prefix))
-          );
+          if ('caches' in window) {
+            var cacheNames = await caches.keys();
+            var staleCaches = cacheNames.filter(function (cacheName) {
+              return ${JSON.stringify(LEGACY_CACHE_PREFIXES)}.some(function (prefix) {
+                return cacheName.startsWith(prefix);
+              });
+            });
 
-          await Promise.all(staleCaches.map((cacheName) => caches.delete(cacheName)));
+            await Promise.all(staleCaches.map(function (cacheName) {
+              return caches.delete(cacheName);
+            }));
+          }
+
+          if (
+            hadLegacyServiceWorker &&
+            navigator.serviceWorker.controller &&
+            sessionStorage.getItem('${SW_CLEANUP_KEY}') !== '1'
+          ) {
+            sessionStorage.setItem('${SW_CLEANUP_KEY}', '1');
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error('Service worker cleanup failed:', error);
         }
+      })();
+    })();
+  `;
 
-        if (
-          hadLegacyServiceWorker &&
-          navigator.serviceWorker.controller &&
-          sessionStorage.getItem(SW_CLEANUP_KEY) !== '1'
-        ) {
-          sessionStorage.setItem(SW_CLEANUP_KEY, '1');
-          window.location.reload();
-        }
-      } catch (error) {
-        console.error('Service worker cleanup failed:', error);
-      }
-    };
-
-    void cleanupLegacyServiceWorkers();
-  }, []);
-
-  return null;
+  return <script dangerouslySetInnerHTML={{ __html: script }} />;
 }

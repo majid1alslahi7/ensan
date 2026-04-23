@@ -3,14 +3,23 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { FaFileContract, FaCalendar, FaArrowLeft, FaDownload, FaTag, FaCircleInfo } from 'react-icons/fa6';
+import { FaCalendar, FaArrowLeft, FaDownload, FaTag, FaCircleInfo } from 'react-icons/fa6';
 import { tendersAPI } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import { CONTACT_EMAIL } from '@/lib/contact';
 
+type TenderDetail = {
+  deadline?: string;
+  description?: string;
+  file_url?: string;
+  reference?: string;
+  status?: 'open' | 'closed' | string;
+  title_ar?: string;
+};
+
 export default function TenderDetailPage() {
-  const { id } = useParams();
-  const [tender, setTender] = useState<any>(null);
+  const { id } = useParams<{ id: string }>();
+  const [tender, setTender] = useState<TenderDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -39,7 +39,11 @@ type Project = {
   program?: Program;
 };
 
-function collection(payload: any): any[] {
+type CollectionPayload<T> = {
+  data?: T[] | { data?: T[] };
+};
+
+function collection<T>(payload: T[] | CollectionPayload<T> | null): T[] {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.data)) return payload.data;
   if (Array.isArray(payload?.data?.data)) return payload.data.data;
@@ -125,7 +129,7 @@ export default async function ProgramDetailsPage({ params }: { params: Promise<{
     <div className="pt-navbar">
       <section className="relative overflow-hidden bg-gray-950 text-white">
         <div className="absolute inset-0">
-          <Image src={imageUrl(program.image)} alt={title} fill className="object-cover opacity-45" priority />
+          <Image src={imageUrl(program.image)} alt={title} fill className="object-cover opacity-45" sizes="100vw" preload />
           <div className="absolute inset-0 bg-gradient-to-l from-black/85 via-black/60 to-black/40" />
         </div>
         <div className="container-page relative z-10 py-20 md:py-28">

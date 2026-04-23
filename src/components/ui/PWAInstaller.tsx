@@ -8,39 +8,48 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+type NavigatorWithStandalone = Navigator & {
+  standalone?: boolean;
+};
+
+function isStandaloneMode() {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  return window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as NavigatorWithStandalone).standalone === true ||
+    document.referrer.includes('android-app://');
+}
+
+function isIOSDevice() {
+  if (typeof navigator === 'undefined') {
+    return false;
+  }
+
+  return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+}
+
 export default function PWAInstaller() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
+  const [isStandalone] = useState(isStandaloneMode);
+  const [isIOS] = useState(isIOSDevice);
 
   useEffect(() => {
-    const isInStandaloneMode = () => {
-      return window.matchMedia('(display-mode: standalone)').matches ||
-             (window.navigator as any).standalone ||
-             document.referrer.includes('android-app://');
-    };
-    
-    setIsStandalone(isInStandaloneMode());
-    
-    // التحقق من iOS
-    const userAgent = navigator.userAgent.toLowerCase();
-    setIsIOS(/iphone|ipad|ipod/.test(userAgent));
-
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       
       const hasShownPrompt = localStorage.getItem('pwa-prompt-shown');
-      if (!hasShownPrompt && !isInStandaloneMode()) {
+      if (!hasShownPrompt && !isStandaloneMode()) {
         setTimeout(() => setShowPrompt(true), 3000);
       }
     };
 
     window.addEventListener('beforeinstallprompt', handler);
     
-    // لـ iOS
-    if (!isInStandaloneMode() && /iphone|ipad|ipod/.test(userAgent)) {
+    if (!isStandaloneMode() && isIOSDevice()) {
       const hasShownIOSPrompt = localStorage.getItem('pwa-ios-prompt-shown');
       if (!hasShownIOSPrompt) {
         setTimeout(() => setShowPrompt(true), 3000);

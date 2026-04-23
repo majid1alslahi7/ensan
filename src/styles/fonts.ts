@@ -14,12 +14,7 @@ export const poppins = localFont({
 });
 
 export const cairo = localFont({
-  src: [
-    { path: '../fonts/Cairo-Regular.ttf', weight: '400', style: 'normal' },
-    { path: '../fonts/Cairo-Medium.ttf', weight: '500', style: 'normal' },
-    { path: '../fonts/Cairo-SemiBold.ttf', weight: '600', style: 'normal' },
-    { path: '../fonts/Cairo-Bold.ttf', weight: '700', style: 'normal' },
-  ],
+  src: [{ path: '../fonts/Cairo-VariableFont_slnt,wght.ttf', weight: '200 1000', style: 'normal' }],
   variable: '--font-cairo',
   display: 'swap',
   fallback: ['system-ui', 'sans-serif'],

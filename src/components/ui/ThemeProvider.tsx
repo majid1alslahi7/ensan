@@ -14,26 +14,32 @@ export const useTheme = () => {
   return c;
 };
 
+function getInitialMode(): 'light' | 'dark' {
+  if (typeof window === 'undefined') {
+    return 'light';
+  }
+
+  const storedMode = localStorage.getItem('theme-mode');
+
+  if (storedMode === 'light' || storedMode === 'dark') {
+    return storedMode;
+  }
+
+  return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<'light' | 'dark'>('light');
-  const [mounted, setMounted] = useState(false);
+  const [mode, setMode] = useState<'light' | 'dark'>(getInitialMode);
 
   useEffect(() => {
-    setMounted(true);
-    const s = localStorage.getItem('theme-mode');
-    if (s === 'light' || s === 'dark') setMode(s);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
     const t = mode === 'dark' ? darkTheme : lightTheme;
     const root = document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(mode);
-    const v = generateThemeVariables(t as any);
+    const v = generateThemeVariables(t);
     Object.entries(v).forEach(([k, val]) => root.style.setProperty(k, val));
     localStorage.setItem('theme-mode', mode);
-  }, [mode, mounted]);
+  }, [mode]);
 
   const toggleTheme = () => setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
 

@@ -8,6 +8,9 @@ import { FaBars, FaXmark, FaChevronDown, FaMoon, FaSun } from 'react-icons/fa6';
 import { useTheme } from '@/components/ui/ThemeProvider';
 import { siteData } from '@/lib/data/siteData';
 
+type NavigationItem = (typeof siteData.navigation.main)[number];
+type NavigationChild = NonNullable<NavigationItem['children']>[number];
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState('');
@@ -44,8 +47,12 @@ export default function Navbar() {
   }, [isOpen]);
 
   useEffect(() => {
-    setIsOpen(false);
-    setOpenDropdown('');
+    const frameId = window.requestAnimationFrame(() => {
+      setIsOpen(false);
+      setOpenDropdown('');
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
   }, [pathname]);
 
   const handleDropdownEnter = (name: string) => {
@@ -69,16 +76,18 @@ export default function Navbar() {
                 alt="مؤسسة إنسان للأعمال الإنسانية" 
                 fill
                 className="object-contain object-right" 
-                priority={true}
+                sizes="(max-width: 768px) 192px, 224px"
+                loading="eager"
+                fetchPriority="high"
               />
             </div>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
-            {siteData.navigation.main.map((item: any) => {
+            {siteData.navigation.main.map((item: NavigationItem) => {
               const hasChildren = item.children && item.children.length > 0;
               const Icon = item.icon;
-              const isActive = pathname === item.href || (hasChildren && item.children?.some((c: any) => pathname === c.href));
+              const isActive = pathname === item.href || (hasChildren && item.children?.some((child: NavigationChild) => pathname === child.href));
               
               if (hasChildren) {
                 return (
@@ -106,7 +115,7 @@ export default function Navbar() {
                           onMouseEnter={() => handleDropdownEnter(item.name)}
                           onMouseLeave={handleDropdownLeave}
                         >
-                          {item.children.map((child: any) => (
+                          {item.children.map((child: NavigationChild) => (
                             <Link
                               key={child.href}
                               href={child.href}
@@ -182,6 +191,7 @@ export default function Navbar() {
                       alt="مؤسسة إنسان" 
                       fill
                       className="object-contain object-right" 
+                      sizes="160px"
                     />
                   </div>
                   <button onClick={() => setIsOpen(false)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
@@ -190,7 +200,7 @@ export default function Navbar() {
                 </div>
                 
                 <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                  {siteData.navigation.main.map((item: any) => {
+                  {siteData.navigation.main.map((item: NavigationItem) => {
                     const hasChildren = item.children && item.children.length > 0;
                     const Icon = item.icon;
                     
@@ -213,7 +223,7 @@ export default function Navbar() {
                                 exit={{ opacity: 0, height: 0 }}
                                 className="mr-6 mt-2 space-y-1 border-r-2 border-primary-500/30 pr-4"
                               >
-                                {item.children.map((child: any) => (
+                                {item.children.map((child: NavigationChild) => (
                                   <Link
                                     key={child.href}
                                     href={child.href}

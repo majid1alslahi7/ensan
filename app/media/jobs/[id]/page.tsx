@@ -3,14 +3,24 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { FaBriefcase, FaMapPin, FaClock, FaArrowLeft, FaCalendar, FaBuilding } from 'react-icons/fa6';
+import { FaMapPin, FaClock, FaArrowLeft, FaCalendar, FaBuilding } from 'react-icons/fa6';
 import { careersAPI } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import { CONTACT_EMAIL } from '@/lib/contact';
 
+type JobDetail = {
+  deadline?: string;
+  department?: string;
+  description?: string;
+  location?: string;
+  requirements?: string;
+  title_ar?: string;
+  type?: 'full_time' | 'part_time' | string;
+};
+
 export default function JobDetailPage() {
-  const { id } = useParams();
-  const [job, setJob] = useState<any>(null);
+  const { id } = useParams<{ id: string }>();
+  const [job, setJob] = useState<JobDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
