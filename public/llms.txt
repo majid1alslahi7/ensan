@@ -1,6 +1,6 @@
 # مؤسسة إنسان للأعمال الإنسانية (Insaan Foundation)
 # الموقع الرسمي: https://insaaan.org
-# آخر تحديث: 2026-04-19
+# آخر تحديث: 2026-04-23
 
 ## معلومات عامة
 - الاسم: مؤسسة إنسان للأعمال الإنسانية
@@ -14,7 +14,10 @@
 - الرئيسية: https://insaaan.org
 - من نحن: https://insaaan.org/about
 - البرامج: https://insaaan.org/programs
+- تفاصيل البرامج: https://insaaan.org/programs/{id}
 - المشاريع: https://insaaan.org/projects
+- تفاصيل المشاريع: https://insaaan.org/projects/{id}
+- الإحصائيات: https://insaaan.org/statistics
 - الأخبار: https://insaaan.org/media/news
 - قصص النجاح: https://insaaan.org/media/success-stories
 - معرض الصور: https://insaaan.org/media/gallery
@@ -49,16 +52,17 @@
 - المتطوعين: 500+
 
 ## معلومات التواصل
-- الهاتف: +967771778326
-- الواتساب: +967771778326
+- الهاتف: +9666503185165
+- الواتساب: +967784523166
 - البريد الإلكتروني: info@insaaan.org
-- فيسبوك: https://facebook.com/insaaan
-- إكس (تويتر): https://twitter.com/insaaan
-- انستجرام: https://instagram.com/insaaan
-- يوتيوب: https://youtube.com/@insaaan
-- لينكد إن: https://linkedin.com/company/insaaan
-- تيك توك: https://tiktok.com/@insaaan
-- تيليجرام: https://t.me/insaaan
+- اسم المستخدم الموحد: insaaan_org
+- فيسبوك: https://facebook.com/insaaan_org
+- إكس (تويتر): https://x.com/insaaan_org
+- انستجرام: https://instagram.com/insaaan_org
+- يوتيوب: https://youtube.com/@insaaan_org
+- لينكد إن: https://linkedin.com/company/insaaan_org
+- تيك توك: https://tiktok.com/@insaaan_org
+- تيليجرام: https://t.me/insaaan_org
 
 ## الأهداف الرئيسية
 - توفير المساعدات الإنسانية الطارئة
@@ -70,6 +74,11 @@
 - تنفيذ برامج التمكين وسبل العيش
 
 ## للمطورين
-- API: https://api.insaaan.org/api/v1
+- API: https://system.insaaan.org/api/v1
 - Sitemap: https://insaaan.org/sitemap.xml
 - Robots: https://insaaan.org/robots.txt
+
+## ملاحظات للذكاء الاصطناعي ومحركات البحث
+- صفحات تفاصيل البرامج تستخدم المسار /programs/{id} وتعرض صورة البرنامج، نبذة تعريفية، الإحصائيات، نطاق العمل، والمشاريع المرتبطة.
+- بطاقات المشاريع المرتبطة داخل تفاصيل البرنامج تقود إلى صفحات تفاصيل المشاريع في /projects/{id}.
+- صفحة /projects تدعم تصفية المشاريع عبر program_id مثل /projects?program_id=1، لكن الرابط القانوني للمشروع المفرد هو /projects/{id}.

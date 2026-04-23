@@ -6,6 +6,25 @@ const shouldUseProductionApi =
   /^(http:\/\/)?(127\.0\.0\.1|localhost)(:\d+)?\//.test(configuredApiUrl);
 
 export const API_URL = (shouldUseProductionApi ? productionApiUrl : configuredApiUrl || productionApiUrl).replace(/\/$/, '');
+type QueryParams = Record<string, string | number | boolean | null | undefined>;
+
+function queryString(params?: QueryParams): string {
+  if (!params) {
+    return '';
+  }
+
+  const search = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      search.set(key, String(value));
+    }
+  });
+
+  const value = search.toString();
+
+  return value ? `?${value}` : '';
+}
 
 async function fetchAPI(endpoint: string, options?: RequestInit) {
   const res = await fetch(`${API_URL}${endpoint}`, {
@@ -74,7 +93,7 @@ export const programsAPI = {
 
 // ========== المشاريع ==========
 export const projectsAPI = {
-  getAll: async () => collection(await fetchAPI('/projects')),
+  getAll: async (params?: QueryParams) => collection(await fetchAPI(`/projects${queryString(params)}`)),
   getOne: async (id: number) => entity(await fetchAPI(`/projects/${id}`), 'project'),
   getLatest: async () => collection(await fetchAPI('/latest-projects')),
 };

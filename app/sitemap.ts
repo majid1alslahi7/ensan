@@ -96,7 +96,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     }
 
-    // جلب البرامج
+    // جلب تفاصيل البرامج الديناميكية
     const programsRes = await fetch(`${API_URL}/programs`, { next: { revalidate: 86400 } })
     if (programsRes.ok) {
       const programs = await programsRes.json()
@@ -105,8 +105,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           sitemapEntries.push({
             url: `${baseUrl}/programs/${item.id}`,
             lastModified: new Date(item.updated_at || Date.now()),
-            changeFrequency: 'monthly' as const,
-            priority: 0.7,
+            changeFrequency: 'weekly' as const,
+            priority: 0.8,
           })
         })
       }
