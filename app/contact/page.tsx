@@ -7,10 +7,8 @@ import {
   FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaLinkedinIn
 } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
-
-const CONTACT_PHONE = '+967771778326';
-const CONTACT_WHATSAPP = '+967771778326';
-const CONTACT_EMAIL = 'info@insaaan.org';
+import { API_URL } from '@/lib/api';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_WHATSAPP, contactLinks } from '@/lib/contact';
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
@@ -18,25 +16,25 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
 
   const contactInfo = [
-    { icon: FaPhone, label: 'اتصل بنا', value: CONTACT_PHONE, color: '#1A5F7A', link: `tel:${CONTACT_PHONE}`, description: 'متاح 24/7 للاستفسارات العاجلة' },
-    { icon: FaWhatsapp, label: 'واتساب', value: CONTACT_WHATSAPP, color: '#25D366', link: `https://wa.me/${CONTACT_WHATSAPP.replace(/\+/g, '')}`, description: 'رد سريع خلال دقائق' },
-    { icon: FaEnvelope, label: 'البريد الإلكتروني', value: CONTACT_EMAIL, color: '#3B82F6', link: `mailto:${CONTACT_EMAIL}`, description: 'للاقتراحات والاستفسارات العامة' },
+    { icon: FaPhone, label: 'اتصل بنا', value: CONTACT_PHONE, color: '#1A5F7A', link: contactLinks.phone, description: 'متاح للاستفسارات والطلبات العاجلة' },
+    { icon: FaWhatsapp, label: 'واتساب', value: CONTACT_WHATSAPP, color: '#25D366', link: contactLinks.whatsapp, description: 'رد سريع عبر واتساب' },
+    { icon: FaEnvelope, label: 'البريد الإلكتروني', value: CONTACT_EMAIL, color: '#3B82F6', link: contactLinks.email, description: 'للاقتراحات والاستفسارات العامة' },
     { icon: FaLocationDot, label: 'العنوان', value: 'الضالع - اليمن', color: '#D4621A', description: 'المكتب الرئيسي' },
     { icon: FaClock, label: 'ساعات العمل', value: 'الأحد - الخميس: 8:00 ص - 4:00 م', color: '#8B5CF6', description: 'الجمعة والسبت: إجازة' },
   ];
 
   const socialLinks = [
-    { icon: FaFacebookF, href: 'https://facebook.com/insaaan', color: '#1877F2' },
-    { icon: FaTwitter, href: 'https://twitter.com/insaaan', color: '#1DA1F2' },
-    { icon: FaInstagram, href: 'https://instagram.com/insaaan', color: '#E4405F' },
-    { icon: FaYoutube, href: 'https://youtube.com/@insaaan', color: '#FF0000' },
-    { icon: FaLinkedinIn, href: 'https://linkedin.com/company/insaaan', color: '#0A66C2' },
+    { icon: FaFacebookF, href: contactLinks.facebook, color: '#1877F2' },
+    { icon: FaTwitter, href: contactLinks.x, color: '#1DA1F2' },
+    { icon: FaInstagram, href: contactLinks.instagram, color: '#E4405F' },
+    { icon: FaYoutube, href: contactLinks.youtube, color: '#FF0000' },
+    { icon: FaLinkedinIn, href: contactLinks.linkedin, color: '#0A66C2' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/complaints`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, type: 'inquiry' }) });
+      const response = await fetch(`${API_URL}/complaints`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, type: 'inquiry' }) });
       if (response.ok) { setSubmitted(true); setForm({ name: '', email: '', phone: '', subject: '', message: '' }); toast.success('تم إرسال رسالتك بنجاح'); }
       else { toast.error('حدث خطأ، الرجاء المحاولة لاحقاً'); }
     } catch { toast.error('حدث خطأ في الاتصال'); } finally { setLoading(false); }

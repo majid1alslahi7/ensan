@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { FaVideo, FaPlay, FaEye } from 'react-icons/fa6';
 import { videosAPI } from '@/lib/api';
+import { formatNumber } from '@/lib/format';
 
 export default function VideosPage() {
   const [videos, setVideos] = useState<any[]>([]);
@@ -12,7 +13,7 @@ export default function VideosPage() {
     async function fetchVideos() {
       try {
         const data = await videosAPI.getAll();
-        setVideos(data.data || data);
+        setVideos(data);
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -50,7 +51,7 @@ export default function VideosPage() {
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{video.title_ar}</h3>
                   <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1"><FaEye /> {video.views} مشاهدة</span>
+                    <span className="flex items-center gap-1"><FaEye /> {formatNumber(video.views)} مشاهدة</span>
                     <span>{video.category}</span>
                   </div>
                 </div>

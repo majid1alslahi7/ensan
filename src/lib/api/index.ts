@@ -1,4 +1,11 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL;
+const productionApiUrl = 'https://system.insaaan.org/api/v1';
+const shouldUseProductionApi =
+  process.env.NODE_ENV === 'production' &&
+  configuredApiUrl !== undefined &&
+  /^(http:\/\/)?(127\.0\.0\.1|localhost)(:\d+)?\//.test(configuredApiUrl);
+
+export const API_URL = (shouldUseProductionApi ? productionApiUrl : configuredApiUrl || productionApiUrl).replace(/\/$/, '');
 
 async function fetchAPI(endpoint: string, options?: RequestInit) {
   const res = await fetch(`${API_URL}${endpoint}`, {
@@ -16,66 +23,103 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
   return res.json();
 }
 
+function collection<T = any>(payload: any): T[] {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  if (Array.isArray(payload?.data)) {
+    return payload.data;
+  }
+
+  if (Array.isArray(payload?.data?.data)) {
+    return payload.data.data;
+  }
+
+  return [];
+}
+
+function entity<T = any>(payload: any, key?: string): T | null {
+  if (!payload) {
+    return null;
+  }
+
+  if (key && payload[key]) {
+    return payload[key];
+  }
+
+  if (payload.data && !Array.isArray(payload.data)) {
+    return payload.data;
+  }
+
+  return payload;
+}
+
+function data<T = any>(payload: any): T {
+  return payload?.data ?? payload;
+}
+
 // ========== الأخبار ==========
 export const newsAPI = {
-  getAll: () => fetchAPI('/news'),
-  getFeatured: () => fetchAPI('/featured-news'),
-  getOne: (id: number) => fetchAPI(`/news/${id}`),
+  getAll: async () => collection(await fetchAPI('/news')),
+  getFeatured: async () => collection(await fetchAPI('/featured-news')),
+  getOne: async (id: number) => entity(await fetchAPI(`/news/${id}`)),
 };
 
 // ========== البرامج ==========
 export const programsAPI = {
-  getAll: () => fetchAPI('/programs'),
-  getOne: (id: number) => fetchAPI(`/programs/${id}`),
+  getAll: async () => collection(await fetchAPI('/programs')),
+  getOne: async (id: number) => entity(await fetchAPI(`/programs/${id}`), 'program'),
 };
 
 // ========== المشاريع ==========
 export const projectsAPI = {
-  getAll: () => fetchAPI('/projects'),
-  getOne: (id: number) => fetchAPI(`/projects/${id}`),
-  getLatest: () => fetchAPI('/latest-projects'),
+  getAll: async () => collection(await fetchAPI('/projects')),
+  getOne: async (id: number) => entity(await fetchAPI(`/projects/${id}`), 'project'),
+  getLatest: async () => collection(await fetchAPI('/latest-projects')),
 };
 
 // ========== الإحصائيات ==========
 export const statsAPI = {
-  getAll: () => fetchAPI('/stats'),
-  getHomeStats: () => fetchAPI('/home-stats'),
+  getAll: async () => collection(await fetchAPI('/stats')),
+  getHomeStats: async () => collection(await fetchAPI('/home-stats')),
+  getSummary: async () => data(await fetchAPI('/statistics/summary')),
 };
 
 // ========== قصص النجاح ==========
 export const successStoriesAPI = {
-  getAll: () => fetchAPI('/success-stories'),
-  getOne: (id: number) => fetchAPI(`/success-stories/${id}`),
+  getAll: async () => collection(await fetchAPI('/success-stories')),
+  getOne: async (id: number) => entity(await fetchAPI(`/success-stories/${id}`), 'story'),
 };
 
 // ========== التقارير ==========
 export const reportsAPI = {
-  getAll: () => fetchAPI('/reports'),
-  getOne: (id: number) => fetchAPI(`/reports/${id}`),
+  getAll: async () => collection(await fetchAPI('/reports')),
+  getOne: async (id: number) => entity(await fetchAPI(`/reports/${id}`)),
 };
 
 // ========== الوظائف ==========
 export const careersAPI = {
-  getAll: () => fetchAPI('/careers'),
-  getOne: (id: number) => fetchAPI(`/careers/${id}`),
+  getAll: async () => collection(await fetchAPI('/careers')),
+  getOne: async (id: number) => entity(await fetchAPI(`/careers/${id}`)),
 };
 
 // ========== المناقصات ==========
 export const tendersAPI = {
-  getAll: () => fetchAPI('/tenders'),
-  getOne: (id: number) => fetchAPI(`/tenders/${id}`),
+  getAll: async () => collection(await fetchAPI('/tenders')),
+  getOne: async (id: number) => entity(await fetchAPI(`/tenders/${id}`)),
 };
 
 // ========== معرض الصور ==========
 export const galleryAPI = {
-  getAll: () => fetchAPI('/gallery'),
-  getOne: (id: number) => fetchAPI(`/gallery/${id}`),
+  getAll: async () => collection(await fetchAPI('/gallery')),
+  getOne: async (id: number) => entity(await fetchAPI(`/gallery/${id}`)),
 };
 
 // ========== الفيديوهات ==========
 export const videosAPI = {
-  getAll: () => fetchAPI('/videos'),
-  getOne: (id: number) => fetchAPI(`/videos/${id}`),
+  getAll: async () => collection(await fetchAPI('/videos')),
+  getOne: async (id: number) => entity(await fetchAPI(`/videos/${id}`)),
 };
 
 // ========== المتطوعين ==========

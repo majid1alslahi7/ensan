@@ -1,12 +1,13 @@
 'use client';
 import { motion } from 'motion/react';
 import { FaPhone, FaEnvelope, FaLocationDot, FaClock, FaWhatsapp } from 'react-icons/fa6';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_WHATSAPP, contactLinks } from '@/lib/contact';
 
 export default function CallPage() {
   const contactItems = [
-    { icon: FaPhone, label: 'اتصل بنا', value: '+967 123 456 789', color: '#1A5F7A' },
-    { icon: FaWhatsapp, label: 'واتساب', value: '+967 777 888 999', color: '#25D366' },
-    { icon: FaEnvelope, label: 'البريد الإلكتروني', value: 'info@eusran.org', color: '#3B82F6' },
+    { icon: FaPhone, label: 'اتصل بنا', value: CONTACT_PHONE, color: '#1A5F7A', link: contactLinks.phone },
+    { icon: FaWhatsapp, label: 'واتساب', value: CONTACT_WHATSAPP, color: '#25D366', link: contactLinks.whatsapp },
+    { icon: FaEnvelope, label: 'البريد الإلكتروني', value: CONTACT_EMAIL, color: '#3B82F6', link: contactLinks.email },
     { icon: FaLocationDot, label: 'العنوان', value: 'الضالع - اليمن', color: '#D4621A' },
     { icon: FaClock, label: 'ساعات العمل', value: 'الأحد - الخميس: 8:00 ص - 4:00 م', color: '#8B5CF6' }
   ];
@@ -25,7 +26,7 @@ export default function CallPage() {
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8">
             <div className="space-y-6">
               {contactItems.map((item, i) => (
-                <div key={i} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                <a key={i} href={item.link || '#'} target={item.link?.startsWith('http') ? '_blank' : undefined} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: item.color + '20' }}>
                     <item.icon className="text-xl" style={{ color: item.color }} />
                   </div>
@@ -33,7 +34,7 @@ export default function CallPage() {
                     <p className="text-sm text-gray-500">{item.label}</p>
                     <p className="text-lg font-bold" dir={item.label === 'واتساب' || item.label === 'اتصل بنا' ? 'ltr' : 'rtl'}>{item.value}</p>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </motion.div>

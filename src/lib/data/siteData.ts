@@ -44,6 +44,7 @@ export const siteData = {
       ]},
       { name: 'البرامج', href: '/programs', icon: FaDiagramProject },
       { name: 'المشاريع', href: '/projects', icon: FaStar },
+      { name: 'الإحصائيات', href: '/statistics', icon: FaChartPie },
       { name: 'الأخبار', href: '/media/news', icon: FaNewspaper },
       { name: 'الإعلام', href: '/media', icon: FaImages, children: [
         { name: 'قصص النجاح', href: '/media/success-stories' },

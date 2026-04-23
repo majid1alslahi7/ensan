@@ -1,8 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import { FaStar, FaQuoteRight, FaUser, FaMapPin } from 'react-icons/fa6';
 import { successStoriesAPI } from '@/lib/api';
+import { excerpt, imageUrl } from '@/lib/format';
 
 export default function SuccessStoriesPage() {
   const [stories, setStories] = useState<any[]>([]);
@@ -12,7 +14,7 @@ export default function SuccessStoriesPage() {
     async function fetchStories() {
       try {
         const data = await successStoriesAPI.getAll();
-        setStories(data.data || data);
+        setStories(data);
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -37,14 +39,21 @@ export default function SuccessStoriesPage() {
         <div className="container-page">
           <div className="grid md:grid-cols-2 gap-6">
             {stories.map((story, i) => (
-              <motion.div key={story.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg relative">
+              <motion.div key={story.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden relative">
+                {story.image && (
+                  <div className="relative h-52">
+                    <Image src={imageUrl(story.image)} alt={story.title_ar || 'قصة نجاح'} fill className="object-cover" />
+                  </div>
+                )}
+                <div className="p-8 relative">
                 <FaQuoteRight className="absolute top-6 right-6 text-4xl opacity-10" />
                 <FaStar className="text-3xl text-yellow-500 mb-4" />
                 <h3 className="text-xl font-bold mb-3">{story.title_ar}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">{story.content}</p>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">{excerpt(story.content, 220)}</p>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span className="flex items-center gap-1"><FaUser /> {story.person_name}</span>
                   <span className="flex items-center gap-1"><FaMapPin /> {story.location}</span>
+                </div>
                 </div>
               </motion.div>
             ))}

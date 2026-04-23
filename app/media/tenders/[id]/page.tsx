@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { FaFileContract, FaCalendar, FaArrowLeft, FaDownload, FaTag, FaCircleInfo } from 'react-icons/fa6';
 import { tendersAPI } from '@/lib/api';
+import { formatDate } from '@/lib/format';
+import { CONTACT_EMAIL } from '@/lib/contact';
 
 export default function TenderDetailPage() {
   const { id } = useParams();
@@ -40,7 +42,7 @@ export default function TenderDetailPage() {
           </motion.h1>
           <div className="flex flex-wrap gap-6 text-white/80 text-sm">
             <span className="flex items-center gap-1"><FaTag /> رقم المرجع: {tender.reference}</span>
-            <span className="flex items-center gap-1"><FaCalendar /> تاريخ الإغلاق: {tender.deadline ? new Date(tender.deadline).toLocaleDateString('ar-SA') : 'غير محدد'}</span>
+            <span className="flex items-center gap-1"><FaCalendar /> تاريخ الإغلاق: {formatDate(tender.deadline)}</span>
             <span className={`px-3 py-1 rounded-full text-xs ${tender.status === 'open' ? 'bg-green-500' : 'bg-gray-500'}`}>
               {tender.status === 'open' ? 'مفتوح' : 'مغلق'}
             </span>
@@ -74,7 +76,7 @@ export default function TenderDetailPage() {
             <div className="mt-8 p-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
               <h3 className="font-bold text-yellow-800 dark:text-yellow-400 mb-2">ملاحظة هامة</h3>
               <p className="text-yellow-700 dark:text-yellow-300 text-sm">
-                يرجى قراءة كراسة الشروط بعناية قبل تقديم العطاء. للاستفسارات، يمكنكم التواصل عبر البريد الإلكتروني: tenders@eusran.org
+                يرجى قراءة كراسة الشروط بعناية قبل تقديم العطاء. للاستفسارات، يمكنكم التواصل عبر البريد الإلكتروني: {CONTACT_EMAIL}
               </p>
             </div>
           </div>

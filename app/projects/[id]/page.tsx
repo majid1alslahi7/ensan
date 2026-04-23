@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaArrowLeft, FaUsers, FaMapPin, FaFolder } from 'react-icons/fa6';
 import { projectsAPI } from '@/lib/api';
+import { formatNumber, imageUrl } from '@/lib/format';
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
@@ -39,7 +41,7 @@ export default function ProjectDetailPage() {
             {project.title_ar}
           </motion.h1>
           <div className="flex flex-wrap gap-4 text-white/80 text-sm">
-            <span className="flex items-center gap-1"><FaUsers /> {project.beneficiaries?.toLocaleString()} مستفيد</span>
+            <span className="flex items-center gap-1"><FaUsers /> {formatNumber(project.beneficiaries)} مستفيد</span>
             <span className="flex items-center gap-1"><FaMapPin /> {project.location}</span>
             <span className="flex items-center gap-1"><FaFolder /> {project.program?.name_ar}</span>
           </div>
@@ -47,6 +49,11 @@ export default function ProjectDetailPage() {
       </section>
       <section className="section-py">
         <div className="container-page max-w-4xl">
+          {project.image && (
+            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl shadow-lg mb-8">
+              <Image src={imageUrl(project.image)} alt={project.title_ar || 'مشروع'} fill className="object-cover" priority />
+            </div>
+          )}
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{project.description}</p>
         </div>
       </section>

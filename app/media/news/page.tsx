@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaNewspaper, FaCalendar, FaArrowLeft } from 'react-icons/fa6';
 import { newsAPI } from '@/lib/api';
+import { excerpt, formatDate, imageUrl } from '@/lib/format';
 
 export default function NewsPage() {
   const [news, setNews] = useState<any[]>([]);
@@ -13,7 +15,7 @@ export default function NewsPage() {
     async function fetchNews() {
       try {
         const data = await newsAPI.getAll();
-        setNews(data.data || data);
+        setNews(data);
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
@@ -39,18 +41,24 @@ export default function NewsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {news.map((item, i) => (
               <motion.article key={item.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
-                <div className="h-40 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center">
-                  <FaNewspaper className="text-5xl text-primary-500/50" />
+                <div className="relative h-48 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 overflow-hidden">
+                  {item.image ? (
+                    <Image src={imageUrl(item.image)} alt={item.title_ar || 'خبر'} fill className="object-cover" />
+                  ) : (
+                    <div className="h-full flex items-center justify-center">
+                      <FaNewspaper className="text-5xl text-primary-500/50" />
+                    </div>
+                  )}
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
                     <FaCalendar className="text-primary-500" />
-                    <span>{new Date(item.created_at).toLocaleDateString('ar-SA')}</span>
+                    <span>{formatDate(item.created_at)}</span>
                   </div>
                   <h3 className="text-xl font-bold mb-3">
                     <Link href={`/media/news/${item.id}`} className="hover:text-primary-500">{item.title_ar}</Link>
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">{item.excerpt}</p>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">{excerpt(item.excerpt || item.content)}</p>
                   <Link href={`/media/news/${item.id}`} className="inline-flex items-center gap-2 text-primary-500 font-medium hover:gap-3">
                     اقرأ المزيد <FaArrowLeft className="text-sm" />
                   </Link>

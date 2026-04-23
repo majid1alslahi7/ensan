@@ -11,10 +11,8 @@ import { tokens } from '@/lib/tokens';
 import { siteData } from '@/lib/data/siteData';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-
-const CONTACT_PHONE = '+967771778326';
-const CONTACT_WHATSAPP = '+967771778326';
-const CONTACT_EMAIL = 'info@insaaan.org';
+import { API_URL } from '@/lib/api';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_WHATSAPP, contactLinks } from '@/lib/contact';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -22,14 +20,14 @@ export default function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   const socialLinks = [
-    { icon: FaFacebookF, href: 'https://facebook.com/insaaan', color: '#1877F2', name: 'فيسبوك' },
-    { icon: FaXTwitter, href: 'https://twitter.com/insaaan', color: '#000000', name: 'إكس' },
-    { icon: FaInstagram, href: 'https://instagram.com/insaaan', color: '#E4405F', name: 'انستجرام' },
-    { icon: FaYoutube, href: 'https://youtube.com/@insaaan', color: '#FF0000', name: 'يوتيوب' },
-    { icon: FaLinkedinIn, href: 'https://linkedin.com/company/insaaan', color: '#0A66C2', name: 'لينكد إن' },
-    { icon: FaTiktok, href: 'https://tiktok.com/@insaaan', color: '#000000', name: 'تيك توك' },
-    { icon: FaWhatsapp, href: `https://wa.me/${CONTACT_WHATSAPP.replace(/\+/g, '')}`, color: '#25D366', name: 'واتساب' },
-    { icon: FaTelegram, href: 'https://t.me/insaaan', color: '#26A5E4', name: 'تيليجرام' },
+    { icon: FaFacebookF, href: contactLinks.facebook, color: '#1877F2', name: 'فيسبوك' },
+    { icon: FaXTwitter, href: contactLinks.x, color: '#000000', name: 'إكس' },
+    { icon: FaInstagram, href: contactLinks.instagram, color: '#E4405F', name: 'انستجرام' },
+    { icon: FaYoutube, href: contactLinks.youtube, color: '#FF0000', name: 'يوتيوب' },
+    { icon: FaLinkedinIn, href: contactLinks.linkedin, color: '#0A66C2', name: 'لينكد إن' },
+    { icon: FaTiktok, href: contactLinks.tiktok, color: '#000000', name: 'تيك توك' },
+    { icon: FaWhatsapp, href: contactLinks.whatsapp, color: '#25D366', name: 'واتساب' },
+    { icon: FaTelegram, href: contactLinks.telegram, color: '#26A5E4', name: 'تيليجرام' },
   ];
 
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -37,7 +35,7 @@ export default function Footer() {
     if (!email) { toast.error('الرجاء إدخال البريد الإلكتروني'); return; }
     setSubscribing(true);
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscribers`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+      await fetch(`${API_URL}/subscribers`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
       toast.success('تم الاشتراك بنجاح'); setEmail('');
     } catch { toast.error('حدث خطأ'); } finally { setSubscribing(false); }
   };
@@ -81,8 +79,8 @@ export default function Footer() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="space-y-4">
             <h4 className="text-gray-900 dark:text-white text-lg font-bold flex items-center gap-2"><span className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center"><FaCode className="text-primary-500 text-sm" /></span>روابط سريعة</h4>
             <ul className="grid grid-cols-2 gap-2">
-              {['الرئيسية','من نحن','البرامج','المشاريع','الأخبار','التقارير','تواصل معنا','ساهم معنا'].map((name, i) => (
-                <li key={i}><Link href={['/','/about','/programs','/projects','/media/news','/reports','/contact','/contact/contribute'][i]} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors flex items-center gap-2 group"><span className="w-1 h-1 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />{name}</Link></li>
+              {['الرئيسية','من نحن','البرامج','المشاريع','الإحصائيات','الأخبار','التقارير','تواصل معنا','ساهم معنا'].map((name, i) => (
+                <li key={i}><Link href={['/','/about','/programs','/projects','/statistics','/media/news','/reports','/contact','/contact/contribute'][i]} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors flex items-center gap-2 group"><span className="w-1 h-1 bg-primary-500 rounded-full group-hover:scale-150 transition-transform" />{name}</Link></li>
               ))}
             </ul>
           </motion.div>
@@ -91,7 +89,7 @@ export default function Footer() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="space-y-4">
             <h4 className="text-gray-900 dark:text-white text-lg font-bold flex items-center gap-2"><span className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center"><FaPhone className="text-primary-500 text-sm" /></span>تواصل معنا</h4>
             <ul className="space-y-3">
-              {[{icon:FaPhone,label:'اتصل بنا',value:CONTACT_PHONE,link:`tel:${CONTACT_PHONE}`,color:'#1A5F7A'},{icon:FaWhatsapp,label:'واتساب',value:CONTACT_WHATSAPP,link:`https://wa.me/${CONTACT_WHATSAPP.replace(/\+/g,'')}`,color:'#25D366'},{icon:FaEnvelope,label:'البريد',value:CONTACT_EMAIL,link:`mailto:${CONTACT_EMAIL}`,color:'#3B82F6'}].map((item,i)=> <li key={i}><a href={item.link} target={item.link.startsWith('http')?'_blank':undefined} className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors group"><span className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 flex items-center justify-center transition-colors"><item.icon style={{color:item.color}} /></span><div><p className="text-xs text-gray-500">{item.label}</p><p className="text-sm font-medium" dir="ltr">{item.value}</p></div></a></li>)}
+              {[{icon:FaPhone,label:'اتصل بنا',value:CONTACT_PHONE,link:contactLinks.phone,color:'#1A5F7A'},{icon:FaWhatsapp,label:'واتساب',value:CONTACT_WHATSAPP,link:contactLinks.whatsapp,color:'#25D366'},{icon:FaEnvelope,label:'البريد',value:CONTACT_EMAIL,link:contactLinks.email,color:'#3B82F6'}].map((item,i)=> <li key={i}><a href={item.link} target={item.link.startsWith('http')?'_blank':undefined} className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors group"><span className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 flex items-center justify-center transition-colors"><item.icon style={{color:item.color}} /></span><div><p className="text-xs text-gray-500">{item.label}</p><p className="text-sm font-medium" dir="ltr">{item.value}</p></div></a></li>)}
               <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400"><span className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><FaLocationDot className="text-primary-500" /></span><div><p className="text-xs text-gray-500">العنوان</p><p className="text-sm font-medium">الضالع - اليمن</p></div></li>
             </ul>
           </motion.div>

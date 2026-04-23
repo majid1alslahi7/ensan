@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { FaBriefcase, FaMapPin, FaClock, FaArrowLeft } from 'react-icons/fa6';
+import { FaBriefcase, FaMapPin, FaClock, FaArrowLeft, FaCalendar } from 'react-icons/fa6';
 import { careersAPI } from '@/lib/api';
+import { formatDate } from '@/lib/format';
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState<any[]>([]);
@@ -48,6 +49,7 @@ export default function JobsPage() {
                     <div className="flex flex-wrap gap-4 mt-1 text-sm text-gray-500">
                       <span className="flex items-center gap-1"><FaMapPin /> {job.location}</span>
                       <span className="flex items-center gap-1"><FaClock /> {job.type === 'full_time' ? 'دوام كامل' : 'دوام جزئي'}</span>
+                      <span className="flex items-center gap-1"><FaCalendar /> {formatDate(job.deadline)}</span>
                       <span>{job.department}</span>
                     </div>
                   </div>

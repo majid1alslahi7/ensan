@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { FaList, FaMapPin, FaUsers, FaCalendar, FaArrowLeft } from 'react-icons/fa6';
+import Image from 'next/image';
+import { FaList, FaMapPin, FaUsers, FaArrowLeft } from 'react-icons/fa6';
 import { projectsAPI } from '@/lib/api';
+import { formatNumber, imageUrl } from '@/lib/format';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -13,7 +15,7 @@ export default function ProjectsPage() {
     async function fetchProjects() {
       try {
         const data = await projectsAPI.getAll();
-        setProjects(data.data || data);
+        setProjects(data);
       } catch (error) {
         console.error('Error fetching projects:', error);
       } finally {
@@ -56,6 +58,11 @@ export default function ProjectsPage() {
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all"
               >
                 <div className="h-2" style={{ background: project.program?.color || '#1A5F7A' }} />
+                {project.image && (
+                  <div className="relative h-44">
+                    <Image src={imageUrl(project.image)} alt={project.title_ar || 'مشروع'} fill className="object-cover" />
+                  </div>
+                )}
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: (project.program?.color || '#1A5F7A') + '20' }}>
@@ -68,7 +75,7 @@ export default function ProjectsPage() {
                   <h3 className="text-xl font-bold mb-3">{project.title_ar}</h3>
                   <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
                     <div className="flex items-center gap-2"><FaMapPin className="text-primary-500" /> {project.location}</div>
-                    <div className="flex items-center gap-2"><FaUsers className="text-primary-500" /> {project.beneficiaries?.toLocaleString()} مستفيد</div>
+                    <div className="flex items-center gap-2"><FaUsers className="text-primary-500" /> {formatNumber(project.beneficiaries)} مستفيد</div>
                     {project.program && (
                       <div className="flex items-center gap-2"><FaList className="text-primary-500" /> {project.program.name_ar}</div>
                     )}

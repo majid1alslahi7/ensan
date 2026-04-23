@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import Link from 'next/link';
 import { FaFileContract, FaCalendar, FaArrowLeft } from 'react-icons/fa6';
 import { tendersAPI } from '@/lib/api';
+import { formatDate } from '@/lib/format';
 
 export default function TendersPage() {
   const [tenders, setTenders] = useState<any[]>([]);
@@ -13,7 +14,7 @@ export default function TendersPage() {
     async function fetchTenders() {
       try {
         const data = await tendersAPI.getAll();
-        setTenders(data.data || data);
+        setTenders(data);
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -48,7 +49,7 @@ export default function TendersPage() {
                     <p className="text-sm text-gray-500">رقم المرجع: {tender.reference}</p>
                     <div className="flex gap-4 mt-1">
                       <span className="flex items-center gap-1 text-sm text-gray-500">
-                        <FaCalendar /> {tender.deadline ? new Date(tender.deadline).toLocaleDateString('ar-SA') : 'غير محدد'}
+                        <FaCalendar /> {formatDate(tender.deadline)}
                       </span>
                       <span className={`px-2 py-0.5 rounded-full text-xs ${tender.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
                         {tender.status === 'open' ? 'مفتوح' : 'مغلق'}

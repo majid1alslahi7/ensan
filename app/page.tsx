@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa6';
 import { tokens } from '@/lib/tokens';
 import { newsAPI, programsAPI, statsAPI, galleryAPI } from '@/lib/api';
+import { formatDate, formatNumber, imageUrl } from '@/lib/format';
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,7 +36,7 @@ export default function HomePage() {
         setNews(newsData);
         setPrograms(programsData);
         setStats(statsData);
-        setGallery(galleryData.data || galleryData);
+        setGallery(galleryData);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -112,10 +113,13 @@ export default function HomePage() {
                   {stat.icon === 'FaGlobe' && <FaGlobe className="text-3xl" style={{ color: stat.color }} />}
                   {stat.icon === 'FaHeart' && <FaHeart className="text-3xl" style={{ color: stat.color }} />}
                 </div>
-                <h3 className="text-4xl font-bold mb-2">{stat.value.toLocaleString()}</h3>
+                <h3 className="text-4xl font-bold mb-2">{formatNumber(stat.value)}</h3>
                 <p className="text-gray-500 dark:text-gray-400">{stat.label_ar}</p>
               </motion.div>
             ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/statistics" className="btn btn-primary">عرض شاشة الإحصائيات <FaArrowLeft /></Link>
           </div>
         </div>
       </section>
@@ -142,7 +146,7 @@ export default function HomePage() {
                     <h3 className="text-xl md:text-2xl font-bold">{gallery[currentSlide]?.title_ar}</h3>
                   </div>
                   <Image 
-                    src={gallery[currentSlide]?.image_url} 
+                    src={imageUrl(gallery[currentSlide]?.image_url)}
                     alt={gallery[currentSlide]?.title_ar} 
                     width={800} height={500} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
@@ -211,7 +215,7 @@ export default function HomePage() {
                     <div>
                       <h3 className="font-bold mb-2">{item.title_ar}</h3>
                       <p className="text-sm text-gray-500 flex items-center gap-1">
-                        <FaCalendar /> {new Date(item.created_at).toLocaleDateString('ar-SA')}
+                        <FaCalendar /> {formatDate(item.created_at)}
                       </p>
                     </div>
                   </div>

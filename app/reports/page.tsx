@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { FaChartPie, FaFilePdf, FaBook, FaArrowLeft } from 'react-icons/fa6';
+import { FaChartPie, FaFilePdf, FaBook, FaDownload } from 'react-icons/fa6';
 import { reportsAPI } from '@/lib/api';
+import { formatNumber } from '@/lib/format';
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<any[]>([]);
@@ -13,7 +14,7 @@ export default function ReportsPage() {
     async function fetchReports() {
       try {
         const data = await reportsAPI.getAll();
-        setReports(data.data || data);
+        setReports(data);
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -67,13 +68,13 @@ export default function ReportsPage() {
                     <p className="text-sm text-gray-500">{report.description}</p>
                     <div className="flex gap-4 mt-1 text-xs text-gray-400">
                       <span>السنة: {report.year}</span>
-                      <span>التحميلات: {report.downloads}</span>
+                      <span>التحميلات: {formatNumber(report.downloads)}</span>
                     </div>
                   </div>
                 </div>
-                <button className="mt-4 md:mt-0 px-6 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600">
-                  تحميل
-                </button>
+                <a href={report.file_url || report.file || '#'} target="_blank" className="mt-4 md:mt-0 px-6 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 inline-flex items-center gap-2">
+                  <FaDownload /> تحميل
+                </a>
               </motion.div>
             ))}
           </div>

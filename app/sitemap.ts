@@ -10,6 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: '/about', priority: 0.9, changeFrequency: 'weekly' as const },
     { url: '/programs', priority: 0.9, changeFrequency: 'weekly' as const },
     { url: '/projects', priority: 0.9, changeFrequency: 'weekly' as const },
+    { url: '/statistics', priority: 0.8, changeFrequency: 'daily' as const },
     { url: '/contact', priority: 0.9, changeFrequency: 'monthly' as const },
     { url: '/contact/contribute', priority: 0.9, changeFrequency: 'monthly' as const },
     
@@ -52,7 +53,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // جلب الصفحات الديناميكية (الأخبار، المشاريع، إلخ)
   try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1'
+    const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL
+    const API_URL = (
+      process.env.NODE_ENV === 'production' &&
+      configuredApiUrl &&
+      /^(http:\/\/)?(127\.0\.0\.1|localhost)(:\d+)?\//.test(configuredApiUrl)
+        ? 'https://system.insaaan.org/api/v1'
+        : configuredApiUrl || 'https://system.insaaan.org/api/v1'
+    )
     
     // جلب الأخبار
     const newsRes = await fetch(`${API_URL}/news`, { next: { revalidate: 3600 } })

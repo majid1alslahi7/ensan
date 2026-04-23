@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { FaBriefcase, FaMapPin, FaClock, FaArrowLeft, FaCalendar, FaBuilding } from 'react-icons/fa6';
 import { careersAPI } from '@/lib/api';
+import { formatDate } from '@/lib/format';
+import { CONTACT_EMAIL } from '@/lib/contact';
 
 export default function JobDetailPage() {
   const { id } = useParams();
@@ -42,7 +44,7 @@ export default function JobDetailPage() {
             <span className="flex items-center gap-1"><FaMapPin /> {job.location}</span>
             <span className="flex items-center gap-1"><FaBuilding /> {job.department}</span>
             <span className="flex items-center gap-1"><FaClock /> {job.type === 'full_time' ? 'دوام كامل' : 'دوام جزئي'}</span>
-            <span className="flex items-center gap-1"><FaCalendar /> آخر موعد: {job.deadline ? new Date(job.deadline).toLocaleDateString('ar-SA') : 'غير محدد'}</span>
+            <span className="flex items-center gap-1"><FaCalendar /> آخر موعد: {formatDate(job.deadline)}</span>
           </div>
         </div>
       </section>
@@ -62,7 +64,7 @@ export default function JobDetailPage() {
 
             <div className="mt-8 p-6 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-center">
               <p className="text-lg mb-4">للتقديم على هذه الوظيفة، يرجى إرسال السيرة الذاتية إلى:</p>
-              <p className="text-xl font-bold text-primary-600 dark:text-primary-400">careers@eusran.org</p>
+              <p className="text-xl font-bold text-primary-600 dark:text-primary-400">{CONTACT_EMAIL}</p>
               <p className="text-sm text-gray-500 mt-2">مع ذكر المسمى الوظيفي في عنوان البريد</p>
             </div>
           </div>

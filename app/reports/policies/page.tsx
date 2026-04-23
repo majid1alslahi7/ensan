@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { FaBook, FaFilePdf, FaShield, FaScaleBalanced, FaArrowLeft, FaDownload } from 'react-icons/fa6';
+import { FaBook, FaShield, FaScaleBalanced, FaArrowLeft, FaDownload } from 'react-icons/fa6';
 import { reportsAPI } from '@/lib/api';
 
 const policyIcons: any = {
@@ -21,7 +21,7 @@ export default function PoliciesPage() {
     async function fetchReports() {
       try {
         const data = await reportsAPI.getAll();
-        const policies = (data.data || data).filter((r: any) => r.category === 'policy');
+        const policies = data.filter((r: any) => r.category === 'policy');
         setReports(policies);
       } catch (error) {
         console.error('Error:', error);
@@ -60,9 +60,9 @@ export default function PoliciesPage() {
                     <div className="flex-1">
                       <h3 className="font-bold mb-2">{policy.title_ar}</h3>
                       <p className="text-sm text-gray-500 mb-4">{policy.description}</p>
-                      <button className="flex items-center gap-1 text-sm font-medium text-primary-500">
-                        <FaFilePdf /> تحميل PDF
-                      </button>
+                      <a href={policy.file_url || policy.file || '#'} target="_blank" className="flex items-center gap-1 text-sm font-medium text-primary-500">
+                        <FaDownload /> تحميل PDF
+                      </a>
                     </div>
                   </div>
                 </motion.div>

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   formatDetection: { telephone: true, date: true, address: true, email: true, url: true },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   openGraph: { title: SITE_NAME, description: SITE_DESCRIPTION, url: SITE_URL, siteName: SITE_NAME, images: [{ url: "/icon-512.png", width: 512, height: 512, alt: SITE_NAME, type: "image/png" }], locale: "ar_SA", type: "website", emails: [CONTACT_EMAIL] },
-  twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_DESCRIPTION, images: ["/icon-512.png"], creator: "@insaaan" },
+  twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_DESCRIPTION, images: ["/icon-512.png"], creator: "@insaaan_org" },
 };
 
 export const viewport: Viewport = { themeColor: "#1A5F7A", width: "device-width", initialScale: 1, maximumScale: 5, userScalable: true };
