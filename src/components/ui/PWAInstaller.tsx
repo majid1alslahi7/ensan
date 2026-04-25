@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FaDownload, FaXmark, FaMobileScreen, FaShare } from 'react-icons/fa6';
@@ -152,3 +152,4 @@ export default function PWAInstaller() {
     </AnimatePresence>
   );
 }
+
