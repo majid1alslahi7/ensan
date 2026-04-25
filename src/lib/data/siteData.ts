@@ -44,7 +44,6 @@ export const siteData = {
       ]},
       { name: 'البرامج', href: '/programs', icon: FaDiagramProject },
       { name: 'المشاريع', href: '/projects', icon: FaStar },
-      { name: 'الإحصائيات', href: '/statistics', icon: FaChartPie },
       { name: 'الأخبار', href: '/media/news', icon: FaNewspaper },
       { name: 'الإعلام', href: '/media', icon: FaImages, children: [
         { name: 'قصص النجاح', href: '/media/success-stories' },
@@ -57,10 +56,11 @@ export const siteData = {
         { name: 'مناقصات', href: '/media/tenders' },
         { name: 'عمالة بالأجر اليومي', href: '/media/daily-work' }
       ]},
-      { name: 'التقارير', href: '/reports', icon: FaChartPie, children: [
+      { name: 'تقارير وإحصائيات', href: '/reports', icon: FaChartPie, children: [
         { name: 'تقارير', href: '/reports' },
         { name: 'حصادنا', href: '/reports/annual' },
-        { name: 'الأدلة والسياسات', href: '/reports/policies' }
+        { name: 'الأدلة والسياسات', href: '/reports/policies' },
+        { name: 'الإحصائيات', href: '/reports/statistics' }
       ]},
       { name: 'للتواصل', href: '/contact', icon: FaPhone, children: [
         { name: 'تواصل معنا', href: '/contact' },

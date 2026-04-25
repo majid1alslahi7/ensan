@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FaDownload, FaXmark, FaMobileScreen, FaShare } from 'react-icons/fa6';
@@ -37,6 +37,22 @@ export default function PWAInstaller() {
   const [isIOS] = useState(isIOSDevice);
 
   useEffect(() => {
+    // حذف أي Service Worker قديم والتسجيل من جديد
+    async function cleanupServiceWorkers() {
+      if ('serviceWorker' in navigator) {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+            console.log('Service Worker unregistered:', registration.scope);
+          }
+        } catch (error) {
+          console.error('Error cleaning up Service Workers:', error);
+        }
+      }
+    }
+    cleanupServiceWorkers();
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);

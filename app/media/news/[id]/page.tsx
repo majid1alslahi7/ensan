@@ -75,9 +75,6 @@ export default async function NewsDetailPage({
               </div>
 
               <h1 className="max-w-4xl text-3xl font-bold leading-tight md:text-5xl">{title}</h1>
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-white/85">
-                {news.excerpt || 'تفاصيل موسعة للخبر مع تنسيق ذكي للنصوص والروابط والوسوم ومعرض الصور في نهاية الصفحة.'}
-              </p>
 
               <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/80">
                 <span className="inline-flex items-center gap-2 rounded-full bg-black/15 px-4 py-2 backdrop-blur">
@@ -164,3 +161,4 @@ export default async function NewsDetailPage({
     </div>
   );
 }
+

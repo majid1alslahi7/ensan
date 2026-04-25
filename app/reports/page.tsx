@@ -2,9 +2,37 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { FaChartPie, FaFilePdf, FaBook, FaDownload } from 'react-icons/fa6';
-import { reportsAPI } from '@/lib/api';
+import { FaChartPie, FaFilePdf, FaBook, FaDownload, FaFile, FaFileWord, FaFileExcel, FaFileZipper, FaImage, FaFileLines } from 'react-icons/fa6';
+import { reportsAPI, API_URL } from '@/lib/api';
 import { formatNumber } from '@/lib/format';
+
+// دالة لتحديد الأيقونة واللون حسب نوع الملف
+function getFileIcon(fileUrl?: string) {
+  if (!fileUrl) return { icon: FaFile, color: '#6B7280', bg: '#F3F4F6', type: 'ملف' };
+  const ext = fileUrl.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'pdf': return { icon: FaFilePdf, color: '#EF4444', bg: '#FEE2E2', type: 'PDF' };
+    case 'doc':
+    case 'docx': return { icon: FaFileWord, color: '#2563EB', bg: '#DBEAFE', type: 'Word' };
+    case 'xls':
+    case 'xlsx': return { icon: FaFileExcel, color: '#16A34A', bg: '#DCFCE7', type: 'Excel' };
+    case 'zip':
+    case 'rar':
+    case '7z': return { icon: FaFileZipper, color: '#D97706', bg: '#FEF3C7', type: 'مضغوط' };
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'webp': return { icon: FaImage, color: '#A855F7', bg: '#F3E8FF', type: 'صورة' };
+    default: return { icon: FaFileLines, color: '#6B7280', bg: '#F3F4F6', type: ext?.toUpperCase() || 'ملف' };
+  }
+}
+
+// دالة لتنسيق حجم الملف
+function formatFileSizeDisplay(size?: string) {
+  if (!size) return null;
+  return size;
+}
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<any[]>([]);
@@ -57,29 +85,57 @@ export default function ReportsPage() {
 
           <h2 className="text-2xl font-bold mb-6 text-center">جميع التقارير</h2>
           <div className="space-y-4 max-w-4xl mx-auto">
-            {reports.map((report, i) => (
-              <motion.div key={report.id} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-wrap justify-between items-center">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-                    <FaFilePdf className="text-2xl text-primary-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">{report.title_ar}</h3>
-                    <p className="text-sm text-gray-500">{report.description}</p>
-                    <div className="flex gap-4 mt-1 text-xs text-gray-400">
-                      <span>السنة: {report.year}</span>
-                      <span>التحميلات: {formatNumber(report.downloads)}</span>
+            {reports.map((report, i) => {
+              const fileInfo = getFileIcon(report.file_url);
+              const Icon = fileInfo.icon;
+              return (
+                <motion.div key={report.id} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="flex items-center gap-4">
+                    {/* أيقونة الملف الملونة */}
+                    <div className="p-3 rounded-xl shrink-0" style={{ backgroundColor: fileInfo.bg }}>
+                      <Icon className="text-2xl" style={{ color: fileInfo.color }} />
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-bold truncate">{report.title_ar}</h3>
+                      <p className="text-sm text-gray-500 line-clamp-1">{report.description}</p>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-gray-400">
+                        <span>السنة: {report.year}</span>
+                        <span className="flex items-center gap-1">
+                          <FaDownload className="text-xs" />
+                          {formatNumber(report.downloads)} تحميل
+                        </span>
+                        {/* أيقونة وحجم الملف */}
+                        {report.file_size && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: fileInfo.bg, color: fileInfo.color }}>
+                            <Icon className="text-[10px]" />
+                            {fileInfo.type} - {report.file_size}
+                          </span>
+                        )}
+                        {!report.file_size && fileInfo.type !== 'ملف' && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: fileInfo.bg, color: fileInfo.color }}>
+                            <Icon className="text-[10px]" />
+                            {fileInfo.type}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <a
+                      href={`${API_URL}/reports/${report.id}/download`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 px-6 py-2.5 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors inline-flex items-center gap-2 text-sm font-semibold"
+                    >
+                      <FaDownload /> تحميل
+                    </a>
                   </div>
-                </div>
-                <a href={report.file_url || report.file || '#'} target="_blank" className="mt-4 md:mt-0 px-6 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 inline-flex items-center gap-2">
-                  <FaDownload /> تحميل
-                </a>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
     </div>
   );
 }
+
+

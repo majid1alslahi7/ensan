@@ -172,3 +172,4 @@ export const donationsAPI = {
     body: JSON.stringify(data),
   }),
 };
+
