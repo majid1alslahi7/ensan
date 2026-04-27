@@ -72,7 +72,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center">
             <div className="relative h-10 md:h-12 w-48 md:w-56">
               <Image 
-                src="/logo-wide.png" 
+                src="/logo-wide.webp" 
                 alt="مؤسسة إنسان للأعمال الإنسانية" 
                 fill
                 className="object-contain object-right" 
@@ -187,7 +187,7 @@ export default function Navbar() {
                 <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
                   <div className="relative h-8 w-40">
                     <Image 
-                      src="/logo-wide.png" 
+                      src="/logo-wide.webp" 
                       alt="مؤسسة إنسان" 
                       fill
                       className="object-contain object-right" 

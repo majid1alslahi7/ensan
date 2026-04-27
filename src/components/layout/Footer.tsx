@@ -50,7 +50,7 @@ export default function Footer() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="space-y-4">
             <Link href="/" className="block">
               <div className="relative h-12 w-48">
-                <Image src="/logo-wide.png" alt={tokens.brand.name} fill className="object-contain object-right" sizes="192px" />
+                <Image src="/logo-wide.webp" alt={tokens.brand.name} fill className="object-contain object-right" sizes="192px" />
               </div>
             </Link>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{siteData.about.description.substring(0, 120)}...</p>
