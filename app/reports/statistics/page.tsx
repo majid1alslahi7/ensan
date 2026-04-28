@@ -246,7 +246,7 @@ export default function StatisticsPage() {
                 {(summary.recent_activity?.latest_news || []).map((item: any) => (
                   <Link key={item.id} href={`/media/news/${item.id}`} className="block rounded-xl bg-gray-50 dark:bg-gray-700/60 p-4 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">
                     <p className="font-semibold mb-1">{item.title_ar}</p>
-                    <p className="text-sm text-gray-500">{formatDate(item.published_at)}</p>
+                    <p className="text-sm text-gray-500">{formatDate(item.created_at)}</p>
                   </Link>
                 ))}
                 {(summary.recent_activity?.latest_news || []).length === 0 && (

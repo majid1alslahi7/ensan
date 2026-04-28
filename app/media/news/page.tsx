@@ -17,7 +17,6 @@ type NewsItem = {
   image?: string | null;
   title?: string;
   title_ar?: string;
-  updated_at?: string;
   views?: number;
 };
 
@@ -73,7 +72,7 @@ export default async function NewsPage() {
                   <div className="mb-4 flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400">
                     <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 dark:bg-gray-800">
                       <FaCalendar className="text-primary-500" />
-                      {formatDate(featured.updated_at || featured.published_at)}
+                      {formatDate(featured.published_at)}
                     </span>
                     {!!featured.gallery?.length && (
                       <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 dark:bg-gray-800">
@@ -133,7 +132,7 @@ export default async function NewsPage() {
                   <div className="p-6">
                     <div className="mb-4 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <FaCalendar className="text-primary-500" />
-                      <span>{formatDate(item.updated_at || item.published_at)}</span>
+                      <span>{formatDate(item.published_at)}</span>
                     </div>
 
                     <h2 className="mb-3 text-xl font-bold text-gray-900 dark:text-white">

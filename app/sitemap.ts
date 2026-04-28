@@ -2,21 +2,40 @@ import type { MetadataRoute } from 'next'
 
 type SitemapEntity = {
   id: number | string
-  updated_at?: string
   published_at?: string
+  updated_at?: string
+  created_at?: string
 }
 
-// عنوان API الأساسي - يعمل في standalone و development
+type ApiResponse<T> = T | { data?: T }
+
 const getApiUrl = (): string => {
   const configuredUrl = process.env.NEXT_PUBLIC_API_URL
-  if (configuredUrl && !configuredUrl.includes('localhost') && !configuredUrl.includes('127.0.0.1')) {
-    return configuredUrl
+
+  if (
+    configuredUrl &&
+    !configuredUrl.includes('localhost') &&
+    !configuredUrl.includes('127.0.0.1')
+  ) {
+    return configuredUrl.replace(/\/$/, '')
   }
-  // القيمة الافتراضية للإنتاج - تأكد من أن هذا هو عنوان API الصحيح
+
   return 'https://system.insaaan.org/api/v1'
 }
 
-// دالة مساعدة لجلب البيانات مع مهلة زمنية ومعالجة أخطاء قوية
+const unwrapApiResponse = <T>(json: ApiResponse<T>): T => {
+  if (
+    json &&
+    typeof json === 'object' &&
+    !Array.isArray(json) &&
+    'data' in json
+  ) {
+    return json.data as T
+  }
+
+  return json as T
+}
+
 async function fetchWithTimeout<T>(url: string, timeout = 8000): Promise<T | null> {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), timeout)
@@ -24,14 +43,20 @@ async function fetchWithTimeout<T>(url: string, timeout = 8000): Promise<T | nul
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      next: { revalidate: 3600 }, // إعادة التوليد كل ساعة في standalone
-      headers: { 'Cache-Control': 'no-cache' }
+      next: { revalidate: 3600 },
+      headers: {
+        Accept: 'application/json',
+        'Cache-Control': 'no-cache',
+      },
     })
+
     clearTimeout(timeoutId)
+
     if (!response.ok) return null
-    const data = (await response.json()) as { data?: T } | T
-    // التعامل مع API التي تعيد البيانات داخل { data: [...] }
-    return (data.data || data) as T
+
+    const json = (await response.json()) as ApiResponse<T>
+
+    return unwrapApiResponse<T>(json)
   } catch (error) {
     clearTimeout(timeoutId)
     console.error(`Fetch error for ${url}:`, error)
@@ -39,11 +64,18 @@ async function fetchWithTimeout<T>(url: string, timeout = 8000): Promise<T | nul
   }
 }
 
+const safeDate = (value?: string): Date => {
+  if (!value) return new Date()
+
+  const date = new Date(value)
+
+  return Number.isNaN(date.getTime()) ? new Date() : date
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://insaaan.org'
   const apiUrl = getApiUrl()
 
-  // الصفحات الثابتة
   const staticPages = [
     { url: '/', priority: 1.0, changeFrequency: 'daily' as const },
     { url: '/about', priority: 0.9, changeFrequency: 'weekly' as const },
@@ -73,38 +105,78 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: '/aboutdeveloper', priority: 0.5, changeFrequency: 'yearly' as const },
   ]
 
-  const entries: MetadataRoute.Sitemap = staticPages.map(page => ({
+  const entries: MetadataRoute.Sitemap = staticPages.map((page) => ({
     url: `${baseUrl}${page.url}`,
     lastModified: new Date(),
     changeFrequency: page.changeFrequency,
     priority: page.priority,
   }))
 
-  // تعريف endpoints الديناميكية
   const dynamicEndpoints = [
-    { path: 'news', urlPrefix: '/media/news', priority: 0.7, changeFrequency: 'monthly' as const },
-    { path: 'projects', urlPrefix: '/projects', priority: 0.7, changeFrequency: 'monthly' as const },
-    { path: 'programs', urlPrefix: '/programs', priority: 0.8, changeFrequency: 'weekly' as const },
-    { path: 'success-stories', urlPrefix: '/media/success-stories', priority: 0.7, changeFrequency: 'monthly' as const },
-    { path: 'careers', urlPrefix: '/media/jobs', priority: 0.8, changeFrequency: 'weekly' as const },
-    { path: 'tenders', urlPrefix: '/media/tenders', priority: 0.8, changeFrequency: 'weekly' as const },
+    {
+      path: 'news',
+      urlPrefix: '/media/news',
+      priority: 0.7,
+      changeFrequency: 'monthly' as const,
+      dateField: 'published_at' as const,
+    },
+    {
+      path: 'projects',
+      urlPrefix: '/projects',
+      priority: 0.7,
+      changeFrequency: 'monthly' as const,
+      dateField: 'updated_at' as const,
+    },
+    {
+      path: 'programs',
+      urlPrefix: '/programs',
+      priority: 0.8,
+      changeFrequency: 'weekly' as const,
+      dateField: 'updated_at' as const,
+    },
+    {
+      path: 'success-stories',
+      urlPrefix: '/media/success-stories',
+      priority: 0.7,
+      changeFrequency: 'monthly' as const,
+      dateField: 'updated_at' as const,
+    },
+    {
+      path: 'careers',
+      urlPrefix: '/media/jobs',
+      priority: 0.8,
+      changeFrequency: 'weekly' as const,
+      dateField: 'updated_at' as const,
+    },
+    {
+      path: 'tenders',
+      urlPrefix: '/media/tenders',
+      priority: 0.8,
+      changeFrequency: 'weekly' as const,
+      dateField: 'updated_at' as const,
+    },
   ]
 
-  // جلب البيانات لكل endpoint مع حماية من الفشل
   for (const endpoint of dynamicEndpoints) {
     const url = `${apiUrl}/${endpoint.path}`
     const items = await fetchWithTimeout<SitemapEntity[]>(url, 10000)
-    if (items && Array.isArray(items)) {
-      for (const item of items) {
-        if (item.id) {
-          entries.push({
-            url: `${baseUrl}${endpoint.urlPrefix}/${item.id}`,
-            lastModified: new Date(item.updated_at || item.published_at || Date.now()),
-            changeFrequency: endpoint.changeFrequency,
-            priority: endpoint.priority,
-          })
-        }
-      }
+
+    if (!Array.isArray(items)) continue
+
+    for (const item of items) {
+      if (!item.id) continue
+
+      const lastModifiedValue =
+        endpoint.dateField === 'published_at'
+          ? item.published_at || item.created_at
+          : item.updated_at || item.created_at
+
+      entries.push({
+        url: `${baseUrl}${endpoint.urlPrefix}/${item.id}`,
+        lastModified: safeDate(lastModifiedValue),
+        changeFrequency: endpoint.changeFrequency,
+        priority: endpoint.priority,
+      })
     }
   }
 

@@ -22,7 +22,6 @@ type NewsDetail = {
   image?: string | null;
   title?: string;
   title_ar?: string;
-  updated_at?: string;
   views?: number;
 };
 
@@ -79,7 +78,7 @@ export default async function NewsDetailPage({
               <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/80">
                 <span className="inline-flex items-center gap-2 rounded-full bg-black/15 px-4 py-2 backdrop-blur">
                   <FaCalendar />
-                  {formatDate(news.updated_at || news.published_at)}
+                  {formatDate(news.published_at)}
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full bg-black/15 px-4 py-2 backdrop-blur">
                   <FaEye />
@@ -127,10 +126,7 @@ export default async function NewsDetailPage({
                 <h3 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">الوسوم المستخرجة</h3>
                 <div className="flex flex-wrap gap-2">
                   {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex rounded-full bg-primary-50 px-3 py-1.5 text-sm font-semibold text-primary-700 ring-1 ring-primary-100 dark:bg-primary-900/20 dark:text-primary-300 dark:ring-primary-800/60"
-                    >
+                    <span key={tag} className="inline-flex rounded-full bg-primary-50 px-3 py-1.5 text-sm font-semibold text-primary-700 ring-1 ring-primary-100 dark:bg-primary-900/20 dark:text-primary-300 dark:ring-primary-800/60">
                       {tag}
                     </span>
                   ))}
@@ -146,10 +142,6 @@ export default async function NewsDetailPage({
                   <strong className="text-gray-900 dark:text-white">{formatDate(news.published_at)}</strong>
                 </p>
                 <p className="flex items-center justify-between gap-4 rounded-2xl bg-gray-50 px-4 py-3 dark:bg-gray-800/70">
-                  <span>آخر تحديث</span>
-                  <strong className="text-gray-900 dark:text-white">{formatDate(news.updated_at || news.published_at)}</strong>
-                </p>
-                <p className="flex items-center justify-between gap-4 rounded-2xl bg-gray-50 px-4 py-3 dark:bg-gray-800/70">
                   <span>عدد الصور</span>
                   <strong className="text-gray-900 dark:text-white">{gallery.length}</strong>
                 </p>
@@ -161,4 +153,3 @@ export default async function NewsDetailPage({
     </div>
   );
 }
-

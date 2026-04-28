@@ -19,7 +19,7 @@ type StoryProgram = {
 
 type StoryDetail = {
   content?: string | null;
-  published_at?: string;
+  created_at?: string;
   featured?: boolean;
   gallery?: string[] | null;
   id: number | string;
