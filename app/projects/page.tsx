@@ -14,7 +14,7 @@ type ProjectProgram = {
 
 type ProjectItem = {
   beneficiaries?: number;
-  created_at?: string;
+  published_at?: string;
   end_date?: string | null;
   featured?: boolean;
   gallery?: string[] | null;
@@ -128,7 +128,7 @@ export default async function ProjectsPage({
                     <div className="p-6">
                       <div className="mb-4 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                         <FaCalendar className="text-primary-500" />
-                        <span>{formatDate(project.start_date || project.created_at)}</span>
+                        <span>{formatDate(project.start_date || project.published_at)}</span>
                       </div>
 
                       <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">

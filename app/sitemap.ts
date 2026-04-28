@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 type SitemapEntity = {
   id: number | string
   updated_at?: string
-  created_at?: string
+  published_at?: string
 }
 
 // عنوان API الأساسي - يعمل في standalone و development
@@ -99,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (item.id) {
           entries.push({
             url: `${baseUrl}${endpoint.urlPrefix}/${item.id}`,
-            lastModified: new Date(item.updated_at || item.created_at || Date.now()),
+            lastModified: new Date(item.updated_at || item.published_at || Date.now()),
             changeFrequency: endpoint.changeFrequency,
             priority: endpoint.priority,
           })

@@ -15,7 +15,7 @@ type StoryProgram = {
 
 type StoryItem = {
   content?: string | null;
-  created_at?: string;
+  published_at?: string;
   featured?: boolean;
   gallery?: string[] | null;
   id: number | string;

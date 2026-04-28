@@ -23,7 +23,7 @@ type GalleryItem = {
 type HomeNewsItem = {
   id: number | string;
   title_ar?: string;
-  created_at?: string;
+  published_at?: string;
 };
 
 type HomeProgram = {
@@ -226,7 +226,7 @@ export default function HomePageClient({
                     <div>
                       <h3 className="font-bold mb-2">{item.title_ar}</h3>
                       <p className="text-sm text-gray-500 flex items-center gap-1">
-                        <FaCalendar /> {formatDate(item.created_at)}
+                        <FaCalendar /> {formatDate(item.published_at)}
                       </p>
                     </div>
                   </div>

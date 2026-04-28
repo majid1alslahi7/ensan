@@ -20,7 +20,7 @@ type ProjectProgram = {
 
 type ProjectDetail = {
   beneficiaries?: number;
-  created_at?: string;
+  published_at?: string;
   description?: string | null;
   end_date?: string | null;
   featured?: boolean;
@@ -93,7 +93,7 @@ export default async function ProjectDetailPage({
                 </p>
                 <p className="rounded-2xl bg-black/15 px-4 py-3 backdrop-blur">
                   <span className="mb-1 block text-xs text-white/60">تاريخ البدء</span>
-                  {formatDate(project.start_date || project.created_at)}
+                  {formatDate(project.start_date || project.published_at)}
                 </p>
                 <p className="rounded-2xl bg-black/15 px-4 py-3 backdrop-blur">
                   <span className="mb-1 block text-xs text-white/60">تاريخ الانتهاء</span>
@@ -144,7 +144,7 @@ export default async function ProjectDetailPage({
                 </p>
                 <p className="flex items-center gap-3 rounded-2xl bg-gray-50 px-4 py-3 dark:bg-gray-800/70">
                   <FaCalendar className="text-primary-500" />
-                  <span>{formatDate(project.start_date || project.created_at)}</span>
+                  <span>{formatDate(project.start_date || project.published_at)}</span>
                 </p>
                 <p className="flex items-center gap-3 rounded-2xl bg-gray-50 px-4 py-3 dark:bg-gray-800/70">
                   <FaImages className="text-primary-500" />
