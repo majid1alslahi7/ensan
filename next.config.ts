@@ -1,7 +1,8 @@
-﻿import type { NextConfig } from "next";
+﻿import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+
   async headers() {
     return [
       {
@@ -18,15 +19,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
-          },
-        ],
-      },
-      {
         source: '/manifest.json',
         headers: [
           {
@@ -37,12 +29,20 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'insaaan.org' },
-      { protocol: 'https', hostname: 'system.insaaan.org' },
+      {
+        protocol: 'https',
+        hostname: 'insaaan.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'system.insaaan.org',
+      },
     ],
   },
+
   typescript: {
     ignoreBuildErrors: false,
   },
