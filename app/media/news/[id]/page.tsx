@@ -14,7 +14,7 @@ export const revalidate = 900;
 type NewsDetail = {
   category?: string | null;
   content?: string | null;
-  created_at?: string;
+  published_at?: string;
   excerpt?: string | null;
   featured?: boolean;
   gallery?: string[] | null;
@@ -79,7 +79,7 @@ export default async function NewsDetailPage({
               <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/80">
                 <span className="inline-flex items-center gap-2 rounded-full bg-black/15 px-4 py-2 backdrop-blur">
                   <FaCalendar />
-                  {formatDate(news.updated_at || news.created_at)}
+                  {formatDate(news.updated_at || news.published_at)}
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full bg-black/15 px-4 py-2 backdrop-blur">
                   <FaEye />
@@ -143,11 +143,11 @@ export default async function NewsDetailPage({
               <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
                 <p className="flex items-center justify-between gap-4 rounded-2xl bg-gray-50 px-4 py-3 dark:bg-gray-800/70">
                   <span>تاريخ النشر</span>
-                  <strong className="text-gray-900 dark:text-white">{formatDate(news.created_at)}</strong>
+                  <strong className="text-gray-900 dark:text-white">{formatDate(news.published_at)}</strong>
                 </p>
                 <p className="flex items-center justify-between gap-4 rounded-2xl bg-gray-50 px-4 py-3 dark:bg-gray-800/70">
                   <span>آخر تحديث</span>
-                  <strong className="text-gray-900 dark:text-white">{formatDate(news.updated_at || news.created_at)}</strong>
+                  <strong className="text-gray-900 dark:text-white">{formatDate(news.updated_at || news.published_at)}</strong>
                 </p>
                 <p className="flex items-center justify-between gap-4 rounded-2xl bg-gray-50 px-4 py-3 dark:bg-gray-800/70">
                   <span>عدد الصور</span>
