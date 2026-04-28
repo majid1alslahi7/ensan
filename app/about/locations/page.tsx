@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
-import { FaMapPin, FaCity } from 'react-icons/fa6';
+import {  FaCity } from 'react-icons/fa6';
 import { siteData } from '@/lib/data/siteData';
 
 export default function LocationsPage() {

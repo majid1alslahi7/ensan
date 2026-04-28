@@ -1,17 +1,27 @@
 const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL;
 const productionApiUrl = 'https://system.insaaan.org/api/v1';
+
 const shouldUseProductionApi =
   process.env.NODE_ENV === 'production' &&
   configuredApiUrl !== undefined &&
   /^(http:\/\/)?(127\.0\.0\.1|localhost)(:\d+)?\//.test(configuredApiUrl);
 
-export const API_URL = (shouldUseProductionApi ? productionApiUrl : configuredApiUrl || productionApiUrl).replace(/\/$/, '');
+export const API_URL = (
+  shouldUseProductionApi ? productionApiUrl : configuredApiUrl || productionApiUrl
+).replace(/\/$/, '');
+
 type QueryParams = Record<string, string | number | boolean | null | undefined>;
 
+type ApiResponse<T> =
+  | T
+  | {
+      data?: T;
+    };
+
+type FormDataPayload = Record<string, unknown>;
+
 function queryString(params?: QueryParams): string {
-  if (!params) {
-    return '';
-  }
+  if (!params) return '';
 
   const search = new URLSearchParams();
 
@@ -26,10 +36,15 @@ function queryString(params?: QueryParams): string {
   return value ? `?${value}` : '';
 }
 
-async function fetchAPI(endpoint: string, options?: RequestInit) {
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${endpoint}`, {
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
       ...options?.headers,
     },
     ...options,
@@ -39,137 +54,151 @@ async function fetchAPI(endpoint: string, options?: RequestInit) {
     throw new Error(`API Error: ${res.status}`);
   }
 
-  return res.json();
+  const json = (await res.json()) as ApiResponse<T>;
+
+  if (isRecord(json) && 'data' in json) {
+    return json.data as T;
+  }
+
+  return json as T;
 }
 
-function collection<T = any>(payload: any): T[] {
+export function collection<T>(payload: unknown): T[] {
   if (Array.isArray(payload)) {
-    return payload;
+    return payload as T[];
   }
 
-  if (Array.isArray(payload?.data)) {
-    return payload.data;
-  }
+  if (isRecord(payload)) {
+    const firstData = payload.data;
 
-  if (Array.isArray(payload?.data?.data)) {
-    return payload.data.data;
+    if (Array.isArray(firstData)) {
+      return firstData as T[];
+    }
+
+    if (isRecord(firstData) && Array.isArray(firstData.data)) {
+      return firstData.data as T[];
+    }
   }
 
   return [];
 }
 
-function entity<T = any>(payload: any, key?: string): T | null {
-  if (!payload) {
-    return null;
+export function entity<T>(payload: unknown, key?: string): T | null {
+  if (!payload) return null;
+
+  if (key && isRecord(payload) && key in payload) {
+    return payload[key] as T;
   }
 
-  if (key && payload[key]) {
-    return payload[key];
+  if (isRecord(payload) && 'data' in payload) {
+    const data = payload.data;
+
+    if (!Array.isArray(data)) {
+      return data as T;
+    }
   }
 
-  if (payload.data && !Array.isArray(payload.data)) {
-    return payload.data;
-  }
-
-  return payload;
+  return payload as T;
 }
 
-function data<T = any>(payload: any): T {
-  return payload?.data ?? payload;
-}
-
-// ========== الأخبار ==========
+// الأخبار
 export const newsAPI = {
-  getAll: async () => collection(await fetchAPI('/news')),
-  getFeatured: async () => collection(await fetchAPI('/featured-news')),
-  getOne: async (id: number) => entity(await fetchAPI(`/news/${id}`)),
+  getAll: async () => collection(await fetchAPI<unknown>('/news')),
+  getFeatured: async () => collection(await fetchAPI<unknown>('/featured-news')),
+  getOne: async (id: number) => entity(await fetchAPI<unknown>(`/news/${id}`)),
 };
 
-// ========== البرامج ==========
+// البرامج
 export const programsAPI = {
-  getAll: async () => collection(await fetchAPI('/programs')),
-  getOne: async (id: number) => entity(await fetchAPI(`/programs/${id}`), 'program'),
+  getAll: async () => collection(await fetchAPI<unknown>('/programs')),
+  getOne: async (id: number) => entity(await fetchAPI<unknown>(`/programs/${id}`)),
 };
 
-// ========== المشاريع ==========
+// المشاريع
 export const projectsAPI = {
-  getAll: async (params?: QueryParams) => collection(await fetchAPI(`/projects${queryString(params)}`)),
-  getOne: async (id: number) => entity(await fetchAPI(`/projects/${id}`), 'project'),
-  getLatest: async () => collection(await fetchAPI('/latest-projects')),
+  getAll: async (params?: QueryParams) =>
+    collection(await fetchAPI<unknown>(`/projects${queryString(params)}`)),
+  getOne: async (id: number) =>
+    entity(await fetchAPI<unknown>(`/projects/${id}`), 'project'),
+  getLatest: async () => collection(await fetchAPI<unknown>('/latest-projects')),
 };
 
-// ========== الإحصائيات ==========
+// الإحصائيات
 export const statsAPI = {
-  getAll: async () => collection(await fetchAPI('/stats')),
-  getHomeStats: async () => collection(await fetchAPI('/home-stats')),
-  getSummary: async () => data(await fetchAPI('/statistics/summary')),
+  getAll: async () => collection(await fetchAPI<unknown>('/stats')),
+  getHomeStats: async () => collection(await fetchAPI<unknown>('/home-stats')),
+  getSummary: async () => entity(await fetchAPI<unknown>('/statistics/summary')),
 };
 
-// ========== قصص النجاح ==========
+// قصص النجاح
 export const successStoriesAPI = {
-  getAll: async () => collection(await fetchAPI('/success-stories')),
-  getOne: async (id: number) => entity(await fetchAPI(`/success-stories/${id}`), 'story'),
+  getAll: async () => collection(await fetchAPI<unknown>('/success-stories')),
+  getOne: async (id: number) =>
+    entity(await fetchAPI<unknown>(`/success-stories/${id}`), 'story'),
 };
 
-// ========== التقارير ==========
+// التقارير
 export const reportsAPI = {
-  getAll: async () => collection(await fetchAPI('/reports')),
-  getOne: async (id: number) => entity(await fetchAPI(`/reports/${id}`)),
+  getAll: async () => collection(await fetchAPI<unknown>('/reports')),
+  getOne: async (id: number) => entity(await fetchAPI<unknown>(`/reports/${id}`)),
 };
 
-// ========== الوظائف ==========
+// الوظائف
 export const careersAPI = {
-  getAll: async () => collection(await fetchAPI('/careers')),
-  getOne: async (id: number) => entity(await fetchAPI(`/careers/${id}`)),
+  getAll: async () => collection(await fetchAPI<unknown>('/careers')),
+  getOne: async (id: number) => entity(await fetchAPI<unknown>(`/careers/${id}`)),
 };
 
-// ========== المناقصات ==========
+// المناقصات
 export const tendersAPI = {
-  getAll: async () => collection(await fetchAPI('/tenders')),
-  getOne: async (id: number) => entity(await fetchAPI(`/tenders/${id}`)),
+  getAll: async () => collection(await fetchAPI<unknown>('/tenders')),
+  getOne: async (id: number) => entity(await fetchAPI<unknown>(`/tenders/${id}`)),
 };
 
-// ========== معرض الصور ==========
+// معرض الصور
 export const galleryAPI = {
-  getAll: async () => collection(await fetchAPI('/gallery')),
-  getOne: async (id: number) => entity(await fetchAPI(`/gallery/${id}`)),
+  getAll: async () => collection(await fetchAPI<unknown>('/gallery')),
+  getOne: async (id: number) => entity(await fetchAPI<unknown>(`/gallery/${id}`)),
 };
 
-// ========== الفيديوهات ==========
+// الفيديوهات
 export const videosAPI = {
-  getAll: async () => collection(await fetchAPI('/videos')),
-  getOne: async (id: number) => entity(await fetchAPI(`/videos/${id}`)),
+  getAll: async () => collection(await fetchAPI<unknown>('/videos')),
+  getOne: async (id: number) => entity(await fetchAPI<unknown>(`/videos/${id}`)),
 };
 
-// ========== المتطوعين ==========
+// المتطوعين
 export const volunteersAPI = {
-  create: (data: any) => fetchAPI('/volunteers', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }),
+  create: (data: FormDataPayload) =>
+    fetchAPI('/volunteers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
 
-// ========== المشتركين ==========
+// المشتركين
 export const subscribersAPI = {
-  create: (data: any) => fetchAPI('/subscribers', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }),
+  create: (data: FormDataPayload) =>
+    fetchAPI('/subscribers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
 
-// ========== الشكاوى ==========
+// الشكاوى
 export const complaintsAPI = {
-  create: (data: any) => fetchAPI('/complaints', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }),
+  create: (data: FormDataPayload) =>
+    fetchAPI('/complaints', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
 
-// ========== التبرعات ==========
+// التبرعات
 export const donationsAPI = {
-  create: (data: any) => fetchAPI('/donations', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }),
+  create: (data: FormDataPayload) =>
+    fetchAPI('/donations', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 };
-

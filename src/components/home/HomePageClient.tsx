@@ -191,7 +191,7 @@ export default function HomePageClient({
           <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="section-title">برامجنا وقطاعاتنا</motion.h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {programs.slice(0, 4).map((program) => {
-              const Icon = iconMap[program.icon] || FaHeart;
+              const Icon = program.icon ? iconMap[program.icon] ?? FaHeart : FaHeart;
 
               return (
                 <Link key={program.id} href="/programs">

@@ -3,9 +3,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { 
-  FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaEnvelope, 
+  FaFacebookF, FaX, FaInstagram, FaYoutube, FaEnvelope, 
   FaPhone, FaLocationDot, FaWhatsapp, FaTelegram, FaArrowUp,
-  FaLinkedinIn, FaTiktok, FaXTwitter, FaCode
+  FaLinkedinIn, FaTiktok, FaCode
 } from 'react-icons/fa6';
 import { tokens } from '@/lib/tokens';
 import { siteData } from '@/lib/data/siteData';
@@ -21,7 +21,7 @@ export default function Footer() {
 
   const socialLinks = [
     { icon: FaFacebookF, href: contactLinks.facebook, color: '#1877F2', name: 'فيسبوك' },
-    { icon: FaXTwitter, href: contactLinks.x, color: '#000000', name: 'إكس' },
+    { icon: FaX, href: contactLinks.x, color: '#000000', name: 'إكس' },
     { icon: FaInstagram, href: contactLinks.instagram, color: '#E4405F', name: 'انستجرام' },
     { icon: FaYoutube, href: contactLinks.youtube, color: '#FF0000', name: 'يوتيوب' },
     { icon: FaLinkedinIn, href: contactLinks.linkedin, color: '#0A66C2', name: 'لينكد إن' },

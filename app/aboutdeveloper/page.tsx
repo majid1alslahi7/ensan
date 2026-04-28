@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
-  FaGlobe, FaEnvelope, FaPhone, FaWhatsapp, 
+  FaGlobe, FaEnvelope, FaWhatsapp, 
   FaFacebookF, FaInstagram, FaTwitter, FaLinkedin, FaTiktok, FaYoutube,
   FaLaptopCode, FaMobileScreen, FaPalette, FaCartShopping, FaCloud,
   FaCircleCheck, FaArrowLeft

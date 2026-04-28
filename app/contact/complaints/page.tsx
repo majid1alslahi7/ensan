@@ -1,13 +1,14 @@
 'use client';
+
+import type { FormEvent } from 'react';
 import { motion } from 'motion/react';
-import { FaComment, FaEnvelope, FaPhone } from 'react-icons/fa6';
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function ComplaintsPage() {
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', type: 'complaint' });
-
-  const handleSubmit = (e: any) => { e.preventDefault(); toast.success('تم استلام رسالتك، سنتواصل معك قريباً'); };
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    toast.success('تم استلام رسالتك، سنتواصل معك قريباً');
+  };
 
   return (
     <div className="pt-navbar">
@@ -31,7 +32,7 @@ export default function ComplaintsPage() {
               <option value="inquiry">استفسار</option>
             </select>
             <input type="text" placeholder="الموضوع" className="w-full p-4 rounded-xl border border-gray-300 dark:border-gray-700 dark:bg-gray-900" required />
-            <textarea placeholder="الرسالة" rows={5} className="w-full p-4 rounded-xl border border-gray-300 dark:border-gray-700 dark:bg-gray-900" required></textarea>
+            <textarea placeholder="الرسالة" rows={5} className="w-full p-4 rounded-xl border border-gray-300 dark:border-gray-700 dark:bg-gray-900" required />
             <button type="submit" className="w-full py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-xl font-bold text-lg hover:shadow-xl transition-all">إرسال الرسالة</button>
           </motion.form>
         </div>

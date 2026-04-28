@@ -1,9 +1,11 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { FaCalendar, FaArrowLeft, FaDownload, FaTag, FaCircleInfo } from 'react-icons/fa6';
+
 import { tendersAPI } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 import { CONTACT_EMAIL } from '@/lib/contact';
@@ -25,7 +27,7 @@ export default function TenderDetailPage() {
   useEffect(() => {
     async function fetchTender() {
       try {
-        const data = await tendersAPI.getOne(Number(id));
+        const data = (await tendersAPI.getOne(Number(id))) as TenderDetail;
         setTender(data);
       } catch (error) {
         console.error('Error:', error);
@@ -33,11 +35,17 @@ export default function TenderDetailPage() {
         setLoading(false);
       }
     }
+
     if (id) fetchTender();
   }, [id]);
 
-  if (loading) return <div className="pt-navbar container-page section-py text-center">جاري التحميل...</div>;
-  if (!tender) return <div className="pt-navbar container-page section-py text-center">المناقصة غير موجودة</div>;
+  if (loading) {
+    return <div className="pt-navbar container-page section-py text-center">جاري التحميل...</div>;
+  }
+
+  if (!tender) {
+    return <div className="pt-navbar container-page section-py text-center">المناقصة غير موجودة</div>;
+  }
 
   return (
     <div className="pt-navbar">
@@ -46,13 +54,29 @@ export default function TenderDetailPage() {
           <Link href="/media/tenders" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6">
             <FaArrowLeft /> العودة للمناقصات
           </Link>
-          <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold mb-4">
+
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-3xl font-bold mb-4"
+          >
             {tender.title_ar}
           </motion.h1>
+
           <div className="flex flex-wrap gap-6 text-white/80 text-sm">
-            <span className="flex items-center gap-1"><FaTag /> رقم المرجع: {tender.reference}</span>
-            <span className="flex items-center gap-1"><FaCalendar /> تاريخ الإغلاق: {formatDate(tender.deadline)}</span>
-            <span className={`px-3 py-1 rounded-full text-xs ${tender.status === 'open' ? 'bg-green-500' : 'bg-gray-500'}`}>
+            <span className="flex items-center gap-1">
+              <FaTag /> رقم المرجع: {tender.reference}
+            </span>
+
+            <span className="flex items-center gap-1">
+              <FaCalendar /> تاريخ الإغلاق: {formatDate(tender.deadline)}
+            </span>
+
+            <span
+              className={`px-3 py-1 rounded-full text-xs ${
+                tender.status === 'open' ? 'bg-green-500' : 'bg-gray-500'
+              }`}
+            >
               {tender.status === 'open' ? 'مفتوح' : 'مغلق'}
             </span>
           </div>
@@ -66,7 +90,7 @@ export default function TenderDetailPage() {
               <FaCircleInfo className="text-2xl text-primary-500" />
               <h2 className="text-2xl font-bold">تفاصيل المناقصة</h2>
             </div>
-            
+
             <div className="prose prose-lg dark:prose-invert max-w-none mb-8">
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{tender.description}</p>
             </div>
@@ -76,7 +100,13 @@ export default function TenderDetailPage() {
                 <h3 className="font-bold mb-4 flex items-center gap-2">
                   <FaDownload /> ملفات المناقصة
                 </h3>
-                <a href={tender.file_url} target="_blank" className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-xl hover:bg-primary-600">
+
+                <a
+                  href={tender.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-xl hover:bg-primary-600"
+                >
                   <FaDownload /> تحميل كراسة الشروط
                 </a>
               </div>

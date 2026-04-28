@@ -1,11 +1,9 @@
 import { 
-  FaUsers, FaSitemap, FaMapPin, FaNewspaper, FaStar, FaImages, 
-  FaVideo, FaChartBar, FaBriefcase, FaPhone, 
-  FaBook, FaShield, FaComment, 
-  FaHandHoldingHeart, FaEnvelope, FaHouse, FaCircleInfo, 
+  FaUsers,  FaNewspaper, FaStar, FaImages, 
+   FaPhone, 
+  FaHouse, 
   FaDiagramProject, FaBullhorn, FaChartPie,
-  FaWheatAwn, FaHouseChimney, FaHeartPulse, FaDroplet, FaShieldHalved,
-  FaEye, FaBullseye, FaHeart, FaLocationDot
+  
 } from 'react-icons/fa6';
 
 export const siteData = {
